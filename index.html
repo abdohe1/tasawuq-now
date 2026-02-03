@@ -2,13 +2,13 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>تسوق الآن</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
     * {
       box-sizing: border-box;
-      font-family: Tahoma, Arial;
+      font-family: Tahoma, Arial, sans-serif;
     }
 
     body {
@@ -45,23 +45,21 @@
     }
 
     .container {
-      padding: 15px;
-      max-width: 900px;
-      margin: auto;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 15px;
     }
 
     .card {
       background: white;
-      border-radius: 15px;
+      border-radius: 14px;
       padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     }
 
     .card img {
       width: 100%;
-      max-height: 220px;
-      object-fit: cover;
       border-radius: 10px;
       margin-bottom: 10px;
     }
@@ -82,18 +80,18 @@
       flex: 1;
       padding: 10px;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       color: white;
       font-weight: bold;
       cursor: pointer;
     }
 
-    .delete {
-      background: #dc3545;
-    }
-
     .edit {
       background: #198754;
+    }
+
+    .delete {
+      background: #dc3545;
     }
 
     #form {
@@ -104,26 +102,15 @@
       width: 100%;
       padding: 10px;
       margin-bottom: 10px;
-      border-radius: 10px;
+      border-radius: 8px;
       border: 1px solid #ccc;
     }
 
     input[type="file"] {
       padding: 5px;
     }
-
-    .save {
-      background: #0d6efd;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 12px;
-      font-size: 16px;
-      cursor: pointer;
-    }
   </style>
 </head>
-
 <body>
 
 <header>
@@ -133,33 +120,22 @@
     <button onclick="showForm()">إضافة إعلان</button>
   </nav>
 </header>
-<input 
-  id="search"
-  placeholder="🔍 ابحث عن إعلان..."
-  oninput="render()"
-  style="
-    width:100%;
-    padding:12px;
-    margin-bottom:15px;
-    border-radius:12px;
-    border:1px solid #ccc;
-  "
->
+
 <div class="container">
 
   <!-- الصفحة الرئيسية -->
   <div id="home"></div>
 
-  <!-- نموذج الإضافة -->
+  <!-- صفحة الإضافة / التعديل -->
   <div id="form" class="card">
     <h3 id="formTitle">إضافة إعلان</h3>
 
-    <input id="title" placeholder="عنوان الإعلان">
+    <input type="text" id="title" placeholder="عنوان الإعلان">
     <textarea id="desc" placeholder="الوصف"></textarea>
-    <input id="price" type="number" placeholder="السعر">
-    <input id="image" type="file" accept="image/*">
+    <input type="number" id="price" placeholder="السعر">
+    <input type="file" id="image">
 
-    <button class="save" onclick="save()">حفظ</button>
+    <button onclick="save()" class="edit">حفظ</button>
   </div>
 
 </div>
@@ -169,51 +145,40 @@
   let editIndex = null;
   let imageData = "";
 
-  const home = document.getElementById("home");
-
-  <script>
-function render() {
-  const q = document.getElementById("search")?.value?.toLowerCase() || "";
-  home.innerHTML = "";
-
-  posts
-    .filter(p =>
-      p.title.toLowerCase().includes(q) ||
-      p.desc.toLowerCase().includes(q)
-    )
-    .forEach((p, i) => {
-      home.innerHTML += `
-        <div class="card">
-          ${p.image ? `<img src="${p.image}">` : ""}
-          <h3>${p.title}</h3>
-          <p>${p.desc}</p>
-          <div class="price">${p.price} 💰</div>
-
-          <div class="actions">
-            <button class="delete" onclick="removePost(${i})">حذف</button>
-            <button class="edit" onclick="editPost(${i})">تعديل</button>
-          </div>
-        </div>
-      `;
-    });
-
-  localStorage.setItem("posts", JSON.stringify(posts));
-}
-</script>
-
   document.getElementById("image").addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = () => imageData = reader.result;
     reader.readAsDataURL(file);
   });
 
+  function render() {
+    const home = document.getElementById("home");
+    home.innerHTML = "";
+
+    posts.forEach((p, i) => {
+      home.innerHTML += `
+        <div class="card">
+          ${p.image ? `<img src="${p.image}">` : ""}
+          <h3>${p.title}</h3>
+          <p>${p.desc}</p>
+          <div class="price">💰 ${p.price}</div>
+          <div class="actions">
+            <button class="edit" onclick="editPost(${i})">تعديل</button>
+            <button class="delete" onclick="removePost(${i})">حذف</button>
+          </div>
+        </div>
+      `;
+    });
+
+    localStorage.setItem("posts", JSON.stringify(posts));
+  }
+
   function save() {
-    const title = document.getElementById("title").value;
-    const desc = document.getElementById("desc").value;
-    const price = document.getElementById("price").value;
+    const title = document.getElementById("title").value.trim();
+    const desc = document.getElementById("desc").value.trim();
+    const price = document.getElementById("price").value.trim();
 
     if (!title || !price) {
       alert("أدخل العنوان والسعر");
@@ -227,7 +192,6 @@ function render() {
     } else {
       posts[editIndex] = post;
       editIndex = null;
-      document.getElementById("formTitle").innerText = "إضافة إعلان";
     }
 
     clearForm();
@@ -242,8 +206,7 @@ function render() {
     document.getElementById("price").value = p.price;
     imageData = p.image || "";
     editIndex = i;
-
-    document.getElementById("formTitle").innerText = "تعديل الإعلان";
+    document.getElementById("formTitle").innerText = "تعديل إعلان";
     showForm();
   }
 
@@ -260,16 +223,17 @@ function render() {
     document.getElementById("price").value = "";
     document.getElementById("image").value = "";
     imageData = "";
+    document.getElementById("formTitle").innerText = "إضافة إعلان";
   }
 
   function showForm() {
     document.getElementById("form").style.display = "block";
-    home.style.display = "none";
+    document.getElementById("home").style.display = "none";
   }
 
   function showHome() {
     document.getElementById("form").style.display = "none";
-    home.style.display = "block";
+    document.getElementById("home").style.display = "block";
   }
 
   render();
