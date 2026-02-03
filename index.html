@@ -6,107 +6,85 @@
 <title>تسوق الآن</title>
 
 <style>
-*{box-sizing:border-box;font-family:Tajawal,Arial}
-body{margin:0;background:#f2f4f8}
-
-/* HEADER */
-header{
-  background:#0d6efd;
-  color:#fff;
-  padding:20px;
-  text-align:center;
-  border-bottom-left-radius:24px;
-  border-bottom-right-radius:24px;
-}
-header h1{margin:0}
-nav button{
-  background:#fff;
-  color:#0d6efd;
-  border:none;
-  padding:10px 16px;
-  margin:5px;
-  border-radius:14px;
-  font-weight:bold;
+body {
+  margin: 0;
+  font-family: Tahoma, Arial;
+  background: #f4f6f8;
 }
 
-/* COMMON */
-.page{display:none;padding:15px}
-#home{display:block}
-input,select{
-  width:100%;
-  padding:12px;
-  margin-bottom:10px;
-  border-radius:12px;
-  border:1px solid #ddd;
+header {
+  background: linear-gradient(135deg,#0d6efd,#0a58ca);
+  color: white;
+  text-align: center;
+  padding: 20px;
 }
 
-/* SEARCH */
-.search input{border:none}
-
-/* CATEGORIES */
-.categories{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-}
-.cat{
-  background:#fff;
-  padding:14px;
-  border-radius:16px;
-  text-align:center;
-  font-weight:bold;
+header h1 {
+  margin: 0;
 }
 
-/* POSTS */
-.post{
-  background:#fff;
-  border-radius:18px;
-  padding:15px;
-  margin:15px 0;
+nav button {
+  margin: 5px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
 }
-.price{color:#198754;font-weight:bold}
 
-/* BUTTONS */
-.actions{display:flex;gap:10px;margin-top:10px}
-button{
-  padding:10px;
-  border:none;
-  border-radius:12px;
-  font-weight:bold;
+.container {
+  padding: 15px;
 }
-.edit{background:#198754;color:#fff}
-.delete{background:#dc3545;color:#fff}
-.chat{background:#0d6efd;color:#fff}
 
-/* CHAT */
-.chat-box{
-  background:#fff;
-  border-radius:18px;
-  padding:10px;
-  height:300px;
-  overflow-y:auto;
-  margin-bottom:10px;
+.search {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
 }
-.msg{
-  margin:5px 0;
-  padding:8px 12px;
-  border-radius:14px;
-  max-width:80%;
-}
-.me{background:#0d6efd;color:#fff;margin-left:auto}
-.other{background:#eee}
 
-/* BOTTOM */
-.bottom{
-  position:fixed;
-  bottom:0;left:0;right:0;
-  background:#fff;
-  display:flex;
-  justify-content:space-around;
-  padding:10px 0;
-  border-top:1px solid #ddd;
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.08);
 }
-body{padding-bottom:70px}
+
+.card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  margin: 5px 0;
+}
+
+.price {
+  color: green;
+  font-weight: bold;
+}
+
+.actions button {
+  width: 48%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+}
+
+.delete { background: #dc3545; }
+.edit { background: #198754; }
+
+#form, #admin { display: none; }
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
 </style>
 </head>
 
@@ -115,136 +93,134 @@ body{padding-bottom:70px}
 <header>
   <h1>🛒 تسوق الآن</h1>
   <nav>
-    <button onclick="show('home')">الرئيسية</button>
-    <button onclick="show('add')">إضافة إعلان</button>
-    <button onclick="show('dashboard')">لوحة التحكم</button>
+    <button onclick="showHome()">الرئيسية</button>
+    <button onclick="showForm()">إضافة إعلان</button>
+    <button onclick="showAdmin()">لوحة التحكم</button>
+    <button onclick="login()">تسجيل دخول</button>
+    <button onclick="logout()">خروج</button>
   </nav>
 </header>
 
-<!-- HOME -->
-<div id="home" class="page">
-  <div class="search">
-    <input id="search" placeholder="🔍 ابحث" oninput="render()">
-  </div>
-
-  <div class="categories">
-    <div class="cat" onclick="setCat('all')">الكل</div>
-    <div class="cat" onclick="setCat('سيارات')">سيارات</div>
-    <div class="cat" onclick="setCat('دراجات')">دراجات</div>
-    <div class="cat" onclick="setCat('ألعاب')">ألعاب</div>
-  </div>
-
+<div class="container" id="home">
+  <input class="search" placeholder="ابحث..." oninput="searchPosts(this.value)">
   <div id="posts"></div>
 </div>
 
-<!-- ADD -->
-<div id="add" class="page">
-  <h3>إضافة إعلان</h3>
-  <input id="username" placeholder="اسمك">
+<div class="container" id="form">
+  <h2 id="formTitle">إضافة إعلان</h2>
   <input id="title" placeholder="العنوان">
   <input id="price" placeholder="السعر">
-  <select id="category">
-    <option>سيارات</option>
-    <option>دراجات</option>
-    <option>ألعاب</option>
-  </select>
-  <button class="edit" onclick="save()">حفظ</button>
+  <input type="file" id="image">
+  <button onclick="savePost()">حفظ</button>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="page">
-  <h3>إعلاناتي</h3>
-  <div id="myPosts"></div>
+<div class="container" id="admin">
+  <h2>لوحة التحكم</h2>
+  <div id="adminPosts"></div>
 </div>
 
-<!-- CHAT -->
-<div id="chat" class="page">
-  <h3 id="chatTitle"></h3>
-  <div class="chat-box" id="chatBox"></div>
-  <input id="msgInput" placeholder="اكتب رسالة">
-  <button class="chat" onclick="sendMsg()">إرسال</button>
-</div>
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-<div class="bottom">
-  <button onclick="show('home')">🏠</button>
-  <button onclick="show('add')">➕</button>
-  <button onclick="show('dashboard')">👤</button>
-</div>
+const firebaseConfig = {
+  apiKey: "PUT_API_KEY",
+  authDomain: "PUT_AUTH_DOMAIN",
+  projectId: "PUT_PROJECT_ID"
+};
 
-<script>
-let posts = JSON.parse(localStorage.getItem("posts"))||[];
-let chats = JSON.parse(localStorage.getItem("chats"))||{};
-let currentCat="all";
-let currentChat=null;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-function show(id){
-  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-  document.getElementById(id).style.display='block';
+let posts = [];
+let editId = null;
+let imageData = "";
+
+const postsBox = document.getElementById("posts");
+const adminBox = document.getElementById("adminPosts");
+
+document.getElementById("image").addEventListener("change", e => {
+  const reader = new FileReader();
+  reader.onload = () => imageData = reader.result;
+  reader.readAsDataURL(e.target.files[0]);
+});
+
+async function loadPosts() {
+  postsBox.innerHTML = "تحميل...";
+  posts = [];
+  const snap = await getDocs(collection(db,"posts"));
+  snap.forEach(d => posts.push({id:d.id,...d.data()}));
+  render(posts);
 }
 
-function setCat(c){currentCat=c;render();}
-
-function save(){
-  if(!username.value||!title.value||!price.value)return alert("أكمل البيانات");
-  posts.push({
-    user:username.value,
-    title:title.value,
-    price:price.value,
-    category:category.value,
-    id:Date.now()
-  });
-  localStorage.setItem("posts",JSON.stringify(posts));
-  render(); show('home');
-}
-
-function render(){
-  postsDiv.innerHTML="";
-  const q=search.value.toLowerCase();
-  posts.filter(p=>
-    (currentCat==="all"||p.category===currentCat)&&
-    p.title.toLowerCase().includes(q)
-  ).forEach(p=>{
-    postsDiv.innerHTML+=`
-    <div class="post">
-      <b>${p.title}</b>
-      <div>${p.category}</div>
-      <div class="price">${p.price}</div>
-      <button class="chat" onclick="openChat(${p.id},'${p.title}')">دردشة</button>
-    </div>`;
+function render(list) {
+  postsBox.innerHTML = "";
+  list.forEach((p,i)=>{
+    postsBox.innerHTML += `
+      <div class="card">
+        ${p.image ? `<img src="${p.image}">` : ""}
+        <h3>${p.title}</h3>
+        <div class="price">${p.price} 💰</div>
+      </div>
+    `;
   });
 }
 
-function openChat(id,title){
-  currentChat=id;
-  chatTitle.innerText="دردشة: "+title;
-  renderChat();
-  show('chat');
+window.savePost = async () => {
+  const title = title.value;
+  const price = price.value;
+  if(!title || !price) return alert("املأ الحقول");
+
+  await addDoc(collection(db,"posts"),{title,price,image:imageData});
+  showHome();
+  loadPosts();
 }
 
-function renderChat(){
-  chatBox.innerHTML="";
-  (chats[currentChat]||[]).forEach(m=>{
-    chatBox.innerHTML+=`<div class="msg ${m.me?'me':'other'}">${m.text}</div>`;
+window.searchPosts = v => {
+  render(posts.filter(p=>p.title.includes(v)));
+}
+
+window.showHome = () => {
+  home.style.display="block";
+  form.style.display="none";
+  admin.style.display="none";
+}
+
+window.showForm = () => {
+  form.style.display="block";
+  home.style.display="none";
+  admin.style.display="none";
+}
+
+window.showAdmin = async () => {
+  admin.style.display="block";
+  home.style.display="none";
+  form.style.display="none";
+  adminBox.innerHTML="";
+  const snap = await getDocs(collection(db,"posts"));
+  snap.forEach(d=>{
+    adminBox.innerHTML+=`
+      <div class="card">
+        <h3>${d.data().title}</h3>
+        <button onclick="deletePost('${d.id}')">حذف</button>
+      </div>`;
   });
 }
 
-function sendMsg(){
-  if(!msgInput.value)return;
-  chats[currentChat]=chats[currentChat]||[];
-  chats[currentChat].push({text:msgInput.value,me:true});
-  localStorage.setItem("chats",JSON.stringify(chats));
-  msgInput.value="";
-  renderChat();
+window.deletePost = async id => {
+  if(confirm("حذف الإعلان؟")){
+    await deleteDoc(doc(db,"posts",id));
+    showAdmin();
+  }
 }
 
-function loadDashboard(){
-  myPosts.innerHTML="";
-  posts.forEach(p=>{
-    myPosts.innerHTML+=`<div class="post">${p.title} - ${p.price}</div>`;
-  });
-}
+window.login = () => signInAnonymously(auth);
+window.logout = () => signOut(auth);
 
-render();
+loadPosts();
 </script>
 
 </body>
