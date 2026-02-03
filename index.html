@@ -129,10 +129,38 @@ function showHome(){
   clearForm();
 }
 
+<script>
+let imageData = "";
+
+document.getElementById("image").addEventListener("change", function(){
+  const file = this.files[0];
+  const reader = new FileReader();
+  reader.onload = () => {
+    imageData = reader.result;
+    document.getElementById("preview").src = imageData;
+  };
+  reader.readAsDataURL(file);
+});
+
 function save(){
   const title = document.getElementById("title").value;
   const desc = document.getElementById("desc").value;
   const price = document.getElementById("price").value;
+
+  if(editIndex === null){
+    posts.push({title, desc, price, image:imageData});
+  }else{
+    posts[editIndex] = {title, desc, price, image:imageData};
+    editIndex = null;
+    document.getElementById("formTitle").innerText="إضافة إعلان";
+  }
+
+  imageData = "";
+  document.getElementById("preview").src="";
+  render();
+  showHome();
+}
+</script>
 
   if(editIndex === null){
     posts.push({title, desc, price});
