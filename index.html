@@ -231,13 +231,6 @@ function save(){
 }
 </script>
 
-  if(editIndex === null){
-    posts.push({title, desc, price});
-  }else{
-    posts[editIndex] = {title, desc, price};
-    editIndex = null;
-    document.getElementById("formTitle").innerText="إضافة إعلان";
-  }
   render();
   showHome();
 }
