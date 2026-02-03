@@ -8,163 +8,108 @@
 <style>
 *{
   box-sizing:border-box;
-  font-family: "Tajawal", Arial, sans-serif;
+  font-family:"Tajawal",Arial,sans-serif;
 }
 
 body{
   margin:0;
   background:#f2f4f8;
-  color:#222;
 }
 
 /* ===== Header ===== */
 header{
   background:linear-gradient(135deg,#0d6efd,#0a58ca);
+  color:#fff;
   padding:15px;
   text-align:center;
-  color:#fff;
 }
 
-header h1{
-  margin:0;
-  font-size:24px;
-}
+header h1{margin:0}
 
-header .nav-btns{
-  margin-top:10px;
-}
-
-header button{
-  background:#fff;
-  border:none;
+nav button{
+  margin:8px;
   padding:8px 14px;
-  margin:5px;
+  border:none;
   border-radius:12px;
   font-weight:bold;
   color:#0d6efd;
 }
 
-/* ===== Search ===== */
-.search-box{
-  padding:15px;
-}
+/* ===== Pages ===== */
+.page{display:none;padding:15px}
+#home{display:block}
 
-.search-box input{
+/* ===== Search ===== */
+.search input{
   width:100%;
-  padding:12px 15px;
+  padding:12px;
   border-radius:25px;
   border:none;
-  font-size:16px;
 }
 
-/* ===== Categories ===== */
-.section-title{
-  padding:10px 15px;
-  font-size:18px;
-  font-weight:bold;
-}
-
-.categories{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  padding:10px 15px;
-}
-
-.category{
-  background:#fff;
-  border-radius:15px;
-  text-align:center;
-  padding:15px 5px;
-  font-size:14px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.08);
-}
-
-.category span{
-  display:block;
-  margin-top:6px;
-}
-
-/* ===== Ads ===== */
-.ads{
-  padding:10px 15px;
-}
-
-.ad{
+/* ===== Cards ===== */
+.card{
   background:#fff;
   border-radius:18px;
   padding:15px;
-  margin-bottom:15px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  margin:15px 0;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
 
-.ad h3{
-  margin:0 0 10px;
-}
+.price{color:#198754;font-weight:bold}
 
-.price{
-  color:#198754;
-  font-weight:bold;
-  font-size:18px;
-}
-
-.ad .actions{
-  margin-top:15px;
+.actions{
   display:flex;
   gap:10px;
+  margin-top:10px;
 }
 
-.ad button{
+.actions button{
   flex:1;
-  padding:10px;
   border:none;
+  padding:10px;
   border-radius:12px;
-  font-weight:bold;
   color:#fff;
+  font-weight:bold;
 }
 
-.delete{
-  background:#dc3545;
+.delete{background:#dc3545}
+.edit{background:#198754}
+
+/* ===== Form ===== */
+form input, form select{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:12px;
+  border:1px solid #ccc;
 }
 
-.edit{
-  background:#198754;
+form button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:14px;
+  background:#0d6efd;
+  color:#fff;
+  font-size:16px;
 }
 
-/* ===== Bottom Bar ===== */
-.bottom-bar{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:#fff;
-  border-top:1px solid #ddd;
-  display:flex;
-  justify-content:space-around;
-  padding:10px 0;
-}
-
-.bottom-bar div{
-  text-align:center;
-  font-size:13px;
-}
-
-/* Add Button */
+/* ===== Add Button ===== */
 .add-btn{
   position:fixed;
-  bottom:55px;
+  bottom:20px;
   left:50%;
   transform:translateX(-50%);
-  background:#f59e0b;
   width:60px;
   height:60px;
+  background:#f59e0b;
+  color:#fff;
+  font-size:30px;
   border-radius:50%;
   display:flex;
-  justify-content:center;
   align-items:center;
-  font-size:30px;
-  color:#fff;
-  font-weight:bold;
+  justify-content:center;
 }
 </style>
 </head>
@@ -173,59 +118,116 @@ header button{
 
 <header>
   <h1>🛒 تسوّق الآن</h1>
-  <div class="nav-btns">
-    <button>الرئيسية</button>
-    <button>إضافة إعلان</button>
-  </div>
+  <nav>
+    <button onclick="showHome()">الرئيسية</button>
+    <button onclick="showForm()">إضافة إعلان</button>
+  </nav>
 </header>
 
-<div class="search-box">
-  <input type="text" placeholder="🔍 ابحث عن إعلان...">
-</div>
-
-<div class="section-title">الأقسام</div>
-
-<div class="categories">
-  <div class="category">🚗<span>سيارات</span></div>
-  <div class="category">🏍️<span>دراجات</span></div>
-  <div class="category">🎮<span>ألعاب</span></div>
-  <div class="category">🏠<span>عقارات</span></div>
-  <div class="category">🛋️<span>منزل</span></div>
-  <div class="category">💼<span>وظائف</span></div>
-  <div class="category">🛠️<span>خدمات</span></div>
-  <div class="category">🏪<span>متاجر</span></div>
-</div>
-
-<div class="section-title">الإعلانات</div>
-
-<div class="ads">
-  <div class="ad">
-    <h3>سيارة للبيع</h3>
-    <div class="price">💰 1000</div>
-    <div class="actions">
-      <button class="delete">حذف</button>
-      <button class="edit">تعديل</button>
-    </div>
+<!-- ===== Home ===== -->
+<div id="home" class="page">
+  <div class="search">
+    <input placeholder="🔍 ابحث عن إعلان">
   </div>
 
-  <div class="ad">
-    <h3>لابتوب</h3>
-    <div class="price">💰 50000</div>
-    <div class="actions">
-      <button class="delete">حذف</button>
-      <button class="edit">تعديل</button>
-    </div>
-  </div>
+  <div id="ads"></div>
 </div>
 
-<div class="add-btn">＋</div>
+<!-- ===== Form ===== -->
+<div id="form" class="page">
+  <h3 id="formTitle">إضافة إعلان</h3>
 
-<div class="bottom-bar">
-  <div>الرئيسية</div>
-  <div>دردشاتي</div>
-  <div>إعلاناتي</div>
-  <div>حسابي</div>
+  <form onsubmit="saveAd(event)">
+    <input id="title" placeholder="عنوان الإعلان">
+    <input id="price" placeholder="السعر">
+    <select id="category">
+      <option>سيارات</option>
+      <option>دراجات</option>
+      <option>ألعاب</option>
+      <option>عقارات</option>
+      <option>وظائف</option>
+    </select>
+    <button>حفظ الإعلان</button>
+  </form>
 </div>
+
+<div class="add-btn" onclick="showForm()">＋</div>
+
+<script>
+let ads = JSON.parse(localStorage.getItem("ads")) || [];
+let editIndex = null;
+
+function showHome(){
+  document.getElementById("home").style.display="block";
+  document.getElementById("form").style.display="none";
+}
+
+function showForm(){
+  document.getElementById("home").style.display="none";
+  document.getElementById("form").style.display="block";
+}
+
+function saveAd(e){
+  e.preventDefault();
+  const title = title.value;
+  const price = price.value;
+  const category = category.value;
+
+  if(!title || !price){
+    alert("أدخل البيانات");
+    return;
+  }
+
+  const ad = {title, price, category};
+
+  if(editIndex === null){
+    ads.push(ad);
+  }else{
+    ads[editIndex] = ad;
+    editIndex = null;
+  }
+
+  localStorage.setItem("ads",JSON.stringify(ads));
+  render();
+  showHome();
+}
+
+function render(){
+  adsDiv.innerHTML="";
+  ads.forEach((a,i)=>{
+    adsDiv.innerHTML += `
+      <div class="card">
+        <h3>${a.title}</h3>
+        <div>${a.category}</div>
+        <div class="price">💰 ${a.price}</div>
+        <div class="actions">
+          <button class="delete" onclick="removeAd(${i})">حذف</button>
+          <button class="edit" onclick="editAd(${i})">تعديل</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function removeAd(i){
+  if(confirm("حذف الإعلان؟")){
+    ads.splice(i,1);
+    localStorage.setItem("ads",JSON.stringify(ads));
+    render();
+  }
+}
+
+function editAd(i){
+  const a = ads[i];
+  title.value = a.title;
+  price.value = a.price;
+  category.value = a.category;
+  editIndex = i;
+  showForm();
+}
+
+render();
+</script>
 
 </body>
 </html>
