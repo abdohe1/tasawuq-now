@@ -1,140 +1,64 @@
 <!DOCTYPE html>
-<html lang="ar" dir=">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0d6efd">
-
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
-}
-</script>
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>تسوّق الآن</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسوق الآن</title>
 
 <style>
-  <script>
-let posts = [];
-let editIndex = null;
-
-function showHome(){
-  document.getElementById("form").style.display="none";
-  document.getElementById("home").style.display="block";
-  clearForm();
-}
-
-function showForm(){
-  document.getElementById("home").style.display="none";
-  document.getElementById("form").style.display="block";
-}
-
-function save(){
-  const title = document.getElementById("title").value;
-  const desc = document.getElementById("desc").value;
-  const price = document.getElementById("price").value;
-
-  if(editIndex === null){
-    posts.push({title, desc, price});
-  }else{
-    posts[editIndex] = {title, desc, price};
-    editIndex = null;
-    document.getElementById("formTitle").innerText="إضافة إعلان";
-  }
-
-  render();
-  showHome();
-}
-
-function edit(i){
-  const p = posts[i];
-  document.getElementById("title").value = p.title;
-  document.getElementById("desc").value = p.desc;
-  document.getElementById("price").value = p.price;
-  editIndex = i;
-  document.getElementById("formTitle").innerText="تعديل الإعلان";
-  showForm();
-}
-
-function removePost(i){
-  if(confirm("حذف الإعلان؟")){
-    posts.splice(i,1);
-    render();
-  }
-}
-
-function clearForm(){
-  document.getElementById("title").value="";
-  document.getElementById("desc").value="";
-  document.getElementById("price").value="";
-}
-
-function render(){
-  const list = document.getElementById("list");
-  list.innerHTML="";
-  posts.forEach((p,i)=>{
-    list.innerHTML += `
-      <div class="card">
-        <h3>${p.title}</h3>
-        <p>${p.desc}</p>
-        <strong>💰 ${p.price}</strong><br><br>
-        <button onclick="edit(${i})">تعديل</button>
-        <button onclick="removePost(${i})">حذف</button>
-      </div>
-    `;
-  });
-}
-</script>
 body{
   margin:0;
-  font-family:Arial, sans-serif;
+  font-family: Arial, sans-serif;
   background:#f4f6f8;
 }
 header{
   background:#0d6efd;
   color:#fff;
-  padding:15px;
+  padding:20px;
   text-align:center;
 }
 nav a{
   color:#fff;
   margin:0 10px;
+  text-decoration:none;
   font-weight:bold;
   cursor:pointer;
 }
 .container{
-  max-width:900px;
-  margin:auto;
-  padding:15px;
+  padding:20px;
 }
 .card{
   background:#fff;
-  padding:15px;
   border-radius:8px;
+  padding:15px;
   margin-bottom:15px;
-  box-shadow:0 2px 5px rgba(0,0,0,.1);
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
 }
+button{
+  border:none;
+  padding:8px 14px;
+  border-radius:5px;
+  cursor:pointer;
+}
+.add{background:#0d6efd;color:#fff}
+.edit{background:#198754;color:#fff}
+.delete{background:#dc3545;color:#fff}
 input, textarea{
   width:100%;
   padding:10px;
-  margin:8px 0;
-  border-radius:5px;
-  border:1px solid #ccc;
+  margin-bottom:10px;
 }
-button{
-  background:#0d6efd;
-  color:#fff;
-  border:none;
-  padding:10px 15px;
-  border-radius:5px;
+img{
+  max-width:100%;
+  border-radius:6px;
 }
-button.delete{background:#dc3545}
-button.edit{background:#198754}
 </style>
 </head>
 
+<body>
+
 <header>
-  <h2>🛒 تسوّق الآن</h2>
+  <h1>🛒 تسوق الآن</h1>
   <nav>
     <a onclick="showHome()">الرئيسية</a>
     <a onclick="showForm()">إضافة إعلان</a>
@@ -143,22 +67,21 @@ button.edit{background:#198754}
 
 <div class="container">
 
-  <!-- الرئيسية -->
+  <!-- الصفحة الرئيسية -->
   <div id="home">
-    <h3>الإعلانات</h3>
-    <div id="list"></div>
+    <h2>الإعلانات</h2>
+    <div id="posts"></div>
   </div>
 
-  <!-- إضافة / تعديل -->
+  <!-- نموذج الإضافة -->
   <div id="form" style="display:none">
-    <h3 id="formTitle">إضافة إعلان</h3>
- <input id="title" placeholder="عنوان الإعلان">
-<textarea id="desc" placeholder="وصف الإعلان"></textarea>
-<input id="price" placeholder="السعر">
-
-<input type="file" id="image" accept="image/*">
-<img id="preview" style="max-width:100%;margin-top:10px;border-radius:8px">
-    <button onclick="save()">حفظ</button>
+    <h2 id="formTitle">إضافة إعلان</h2>
+    <input id="title" placeholder="عنوان الإعلان">
+    <textarea id="desc" placeholder="وصف الإعلان"></textarea>
+    <input id="price" placeholder="السعر">
+    <input type="file" id="image">
+    <img id="preview">
+    <button class="add" onclick="save()">حفظ</button>
   </div>
 
 </div>
@@ -166,27 +89,38 @@ button.edit{background:#198754}
 <script>
 let posts = JSON.parse(localStorage.getItem("posts")) || [];
 let editIndex = null;
+let imageData = "";
+
+document.getElementById("image").addEventListener("change", function(){
+  const file = this.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    imageData = reader.result;
+    document.getElementById("preview").src = imageData;
+  }
+  reader.readAsDataURL(file);
+});
 
 function render(){
-  const list = document.getElementById("list");
-  list.innerHTML = "";
-  if(posts.length === 0){
-    list.innerHTML = "<p>لا توجد إعلانات بعد</p>";
-  }
+  const box = document.getElementById("posts");
+  box.innerHTML = "";
   posts.forEach((p,i)=>{
-    list.innerHTML += `
+    box.innerHTML += `
       <div class="card">
-        <h4>${p.title}</h4>
+        <h3>${p.title}</h3>
         <p>${p.desc}</p>
         <strong>💰 ${p.price}</strong><br><br>
-        <button class="edit" onclick="edit(${i})">تعديل</button>
-        <button class="delete" onclick="remove(${i})">حذف</button>
+        ${p.image ? `<img src="${p.image}">` : ""}
+        <br><br>
+        <button class="edit" onclick="editPost(${i})">تعديل</button>
+        <button class="delete" onclick="removePost(${i})">حذف</button>
       </div>
     `;
   });
   localStorage.setItem("posts", JSON.stringify(posts));
 }
-<script>
+
 function showForm(){
   document.getElementById("home").style.display="none";
   document.getElementById("form").style.display="block";
@@ -197,18 +131,6 @@ function showHome(){
   document.getElementById("home").style.display="block";
   clearForm();
 }
-
-let imageData = "";
-
-document.getElementById("image").addEventListener("change", function(){
-  const file = this.files[0];
-  const reader = new FileReader();
-  reader.onload = () => {
-    imageData = reader.result;
-    document.getElementById("preview").src = imageData;
-  };
-  reader.readAsDataURL(file);
-});
 
 function save(){
   const title = document.getElementById("title").value;
@@ -222,29 +144,23 @@ function save(){
     editIndex = null;
     document.getElementById("formTitle").innerText="إضافة إعلان";
   }
-
-  imageData = "";
-  document.getElementById("preview").src="";
-  render();
-  showHome();
-}
-</script>
-
   render();
   showHome();
 }
 
-function edit(i){
+function editPost(i){
   const p = posts[i];
-  title.value = p.title;
-  desc.value = p.desc;
-  price.value = p.price;
+  document.getElementById("title").value = p.title;
+  document.getElementById("desc").value = p.desc;
+  document.getElementById("price").value = p.price;
+  document.getElementById("preview").src = p.image || "";
+  imageData = p.image || "";
   editIndex = i;
   document.getElementById("formTitle").innerText="تعديل الإعلان";
   showForm();
 }
 
-function remove(i){
+function removePost(i){
   if(confirm("حذف الإعلان؟")){
     posts.splice(i,1);
     render();
@@ -255,9 +171,12 @@ function clearForm(){
   title.value="";
   desc.value="";
   price.value="";
+  preview.src="";
+  imageData="";
 }
 
 render();
 </script>
+
 </body>
 </html>
