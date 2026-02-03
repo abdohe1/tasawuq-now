@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسوق الآن</title>
+
+<style>
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  background:#f2f2f2;
+}
+header{
+  background:#0d6efd;
+  color:#fff;
+  padding:16px;
+  text-align:center;
+}
+header h1{
+  margin:0;
+  font-size:22px;
+}
+nav{
+  margin-top:10px;
+}
+nav button{
+  background:#fff;
+  color:#0d6efd;
+  border:none;
+  padding:8px 14px;
+  margin:4px;
+  border-radius:6px;
+  font-weight:bold;
+}
+
+.container{
+  padding:16px;
+}
+
+.card{
+  background:#fff;
+  border-radius:10px;
+  margin-bottom:16px;
+  overflow:hidden;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
+}
+.card img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+}
+.card-body{
+  padding:12px;
+}
+.price{
+  color:#198754;
+  font-size:18px;
+  font-weight:bold;
+}
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+.actions button{
+  flex:1;
+  border:none;
+  padding:8px;
+  border-radius:6px;
+  font-weight:bold;
+}
+.edit{background:#198754;color:#fff;}
+.delete{background:#dc3545;color:#fff;}
+
+form{
+  background:#fff;
+  padding:16px;
+  border-radius:10px;
+}
+input,textarea{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+.save{
+  background:#0d6efd;
+  color:#fff;
+  border:none;
+  padding:10px;
+  width:100%;
+  border-radius:6px;
+  font-size:16px;
+}
+.hidden{display:none;}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛒 تسوّق الآن</h1>
+  <nav>
+    <button onclick="showHome()">الرئيسية</button>
+    <button onclick="showForm()">إضافة إعلان</button>
+  </nav>
+</header>
+
+<div class="container">
+
+  <!-- الصفحة الرئيسية -->
+  <div id="home"></div>
+
+  <!-- نموذج الإعلان -->
+  <form id="form" class="hidden">
+    <h3 id="formTitle">إضافة إعلان</h3>
+    <input id="title" placeholder="عنوان الإعلان">
+    <textarea id="desc" placeholder="وصف الإعلان"></textarea>
+    <input id="price" type="number" placeholder="السعر">
+    <input id="image" type="file" accept="image/*">
+    <button type="button" class="save" onclick="save()">حفظ</button>
+  </form>
+
+</div>
+
+<script>
+let posts = JSON.parse(localStorage.getItem("posts")||"[]");
+let editIndex = null;
+let imageData = "";
+
+document.getElementById("image").addEventListener("change",function(){
+  const reader = new FileReader();
+  reader.onload = ()=> imageData = reader.result;
+  reader.readAsDataURL(this.files[0]);
+});
+
+function render(){
+  const home = document.getElementById("home");
+  home.innerHTML = "";
+  posts.forEach((p,i)=>{
+    home.innerHTML += `
+      <div class="card">
+        <img src="${p.image}">
+        <div class="card-body">
+          <h3>${p.title}</h3>
+          <p>${p.desc}</p>
+          <div class="price">💰 ${p.price}</div>
+          <div class="actions">
+            <button class="edit" onclick="edit(${i})">تعديل</button>
+            <button class="delete" onclick="removePost(${i})">حذف</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  localStorage.setItem("posts",JSON.stringify(posts));
+}
+
+function showForm(){
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("form").classList.remove("hidden");
+}
+
+function showHome(){
+  document.getElementById("form").classList.add("hidden");
+  document.getElementById("home").classList.remove("hidden");
+  clearForm();
+}
+
+function save(){
+  const title = titleInput.value;
+  const desc = descInput.value;
+  const price = priceInput.value;
+
+  if(editIndex === null){
+    posts.push({title,desc,price,image:imageData});
+  }else{
+    posts[editIndex] = {title,desc,price,image:imageData};
+    editIndex = null;
+  }
+  render();
+  showHome();
+}
+
+function edit(i){
+  const p = posts[i];
+  titleInput.value = p.title;
+  descInput.value = p.desc;
+  priceInput.value = p.price;
+  imageData = p.image;
+  editIndex = i;
+  showForm();
+}
+
+function removePost(i){
+  if(confirm("حذف الإعلان؟")){
+    posts.splice(i,1);
+    render();
+  }
+}
+
+function clearForm(){
+  titleInput.value="";
+  descInput.value="";
+  priceInput.value="";
+  imageData="";
+}
+
+const titleInput = document.getElementById("title");
+const descInput = document.getElementById("desc");
+const priceInput = document.getElementById("price");
+
+render();
+</script>
+
+</body>
+</html>
