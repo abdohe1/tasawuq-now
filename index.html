@@ -1,242 +1,155 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تسوق الآن</title>
+<meta charset="UTF-8">
+<title>تسوّق الآن</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Tahoma, Arial, sans-serif;
-    }
+<style>
+body{margin:0;font-family:Tahoma;background:#f2f4f8}
+header{background:#0d6efd;color:#fff;padding:15px;text-align:center}
+nav button{margin:5px;padding:8px 14px;border:none;border-radius:8px;font-weight:bold}
+.container{max-width:900px;margin:auto;padding:15px}
+.card{background:#fff;border-radius:12px;padding:15px;margin-bottom:15px}
+.hidden{display:none}
+input,select{width:100%;padding:10px;margin:6px 0}
+.actions button{margin:4px}
+</style>
 
-    body {
-      margin: 0;
-      background: #f2f4f8;
-      color: #222;
-    }
-
-    header {
-      background: linear-gradient(135deg, #0d6efd, #0a58ca);
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 26px;
-    }
-
-    nav {
-      margin-top: 10px;
-    }
-
-    nav button {
-      background: white;
-      color: #0d6efd;
-      border: none;
-      padding: 10px 16px;
-      margin: 5px;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 0 15px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 14px;
-      padding: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    }
-
-    .card img {
-      width: 100%;
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
-
-    .price {
-      color: green;
-      font-weight: bold;
-      font-size: 18px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .actions button {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .edit {
-      background: #198754;
-    }
-
-    .delete {
-      background: #dc3545;
-    }
-
-    #form {
-      display: none;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    input[type="file"] {
-      padding: 5px;
-    }
-  </style>
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
+
 <body>
 
 <header>
-  <h1>🛒 تسوق الآن</h1>
-  <nav>
-    <button onclick="showHome()">الرئيسية</button>
-    <button onclick="showForm()">إضافة إعلان</button>
-  </nav>
+<h2>🛒 تسوّق الآن</h2>
+<nav>
+<button onclick="show('home')">الرئيسية</button>
+<button onclick="show('add')">إضافة إعلان</button>
+<button onclick="show('dashboard')">لوحة التحكم</button>
+<button onclick="logout()">خروج</button>
+</nav>
 </header>
 
 <div class="container">
 
-  <!-- الصفحة الرئيسية -->
-  <div id="home"></div>
+<!-- AUTH -->
+<div id="auth" class="card">
+<h3>تسجيل / دخول</h3>
+<input id="email" placeholder="البريد">
+<input id="password" type="password" placeholder="كلمة المرور">
+<button onclick="register()">تسجيل</button>
+<button onclick="login()">دخول</button>
+</div>
 
-  <!-- صفحة الإضافة / التعديل -->
-  <div id="form" class="card">
-    <h3 id="formTitle">إضافة إعلان</h3>
+<!-- SEARCH -->
+<input id="search" placeholder="🔍 بحث" oninput="loadPosts()">
 
-    <input type="text" id="title" placeholder="عنوان الإعلان">
-    <textarea id="desc" placeholder="الوصف"></textarea>
-    <input type="number" id="price" placeholder="السعر">
-    <input type="file" id="image">
+<!-- HOME -->
+<div id="home"></div>
 
-    <button onclick="save()" class="edit">حفظ</button>
-  </div>
+<!-- ADD -->
+<div id="add" class="card hidden">
+<h3>إضافة إعلان</h3>
+<input id="title" placeholder="العنوان">
+<select id="category">
+<option>سيارات</option>
+<option>دراجات</option>
+<option>ألعاب</option>
+</select>
+<input id="price" placeholder="السعر">
+<button onclick="addPost()">حفظ</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden"></div>
 
 </div>
 
 <script>
-  let posts = JSON.parse(localStorage.getItem("posts")) || [];
-  let editIndex = null;
-  let imageData = "";
+/* 🔴 ضع بيانات Firebase الخاصة بك هنا */
+const firebaseConfig = {
+  apiKey: "PUT_YOUR_KEY",
+  authDomain: "PROJECT.firebaseapp.com",
+  projectId: "PROJECT",
+};
+/* 🔴 انتهى */
 
-  document.getElementById("image").addEventListener("change", function () {
-    const file = this.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => imageData = reader.result;
-    reader.readAsDataURL(file);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser = null;
+
+auth.onAuthStateChanged(user=>{
+  if(user){
+    currentUser=user;
+    document.getElementById("auth").style.display="none";
+    loadPosts();
+    loadMyPosts();
+  }else{
+    document.getElementById("auth").style.display="block";
+  }
+});
+
+function register(){
+  auth.createUserWithEmailAndPassword(email.value,password.value);
+}
+function login(){
+  auth.signInWithEmailAndPassword(email.value,password.value);
+}
+function logout(){
+  auth.signOut();
+}
+
+function show(id){
+  document.querySelectorAll(".container > div").forEach(d=>d.classList.add("hidden"));
+  document.getElementById(id)?.classList.remove("hidden");
+}
+
+function addPost(){
+  db.collection("posts").add({
+    title:title.value,
+    category:category.value,
+    price:price.value,
+    uid:currentUser.uid
   });
+}
 
-  function render() {
-    const home = document.getElementById("home");
-    home.innerHTML = "";
-
-    posts.forEach((p, i) => {
-      home.innerHTML += `
+function loadPosts(){
+  home.innerHTML="";
+  const q = search.value.toLowerCase();
+  db.collection("posts").onSnapshot(s=>{
+    s.forEach(d=>{
+      const p=d.data();
+      if(p.title.toLowerCase().includes(q)){
+        home.innerHTML+=`
         <div class="card">
-          ${p.image ? `<img src="${p.image}">` : ""}
-          <h3>${p.title}</h3>
-          <p>${p.desc}</p>
-          <div class="price">💰 ${p.price}</div>
-          <div class="actions">
-            <button class="edit" onclick="editPost(${i})">تعديل</button>
-            <button class="delete" onclick="removePost(${i})">حذف</button>
-          </div>
-        </div>
-      `;
+        <b>${p.title}</b><br>
+        ${p.category} – 💰 ${p.price}
+        </div>`;
+      }
     });
+  });
+}
 
-    localStorage.setItem("posts", JSON.stringify(posts));
-  }
-
-  function save() {
-    const title = document.getElementById("title").value.trim();
-    const desc = document.getElementById("desc").value.trim();
-    const price = document.getElementById("price").value.trim();
-
-    if (!title || !price) {
-      alert("أدخل العنوان والسعر");
-      return;
-    }
-
-    const post = { title, desc, price, image: imageData };
-
-    if (editIndex === null) {
-      posts.push(post);
-    } else {
-      posts[editIndex] = post;
-      editIndex = null;
-    }
-
-    clearForm();
-    showHome();
-    render();
-  }
-
-  function editPost(i) {
-    const p = posts[i];
-    document.getElementById("title").value = p.title;
-    document.getElementById("desc").value = p.desc;
-    document.getElementById("price").value = p.price;
-    imageData = p.image || "";
-    editIndex = i;
-    document.getElementById("formTitle").innerText = "تعديل إعلان";
-    showForm();
-  }
-
-  function removePost(i) {
-    if (confirm("حذف الإعلان؟")) {
-      posts.splice(i, 1);
-      render();
-    }
-  }
-
-  function clearForm() {
-    document.getElementById("title").value = "";
-    document.getElementById("desc").value = "";
-    document.getElementById("price").value = "";
-    document.getElementById("image").value = "";
-    imageData = "";
-    document.getElementById("formTitle").innerText = "إضافة إعلان";
-  }
-
-  function showForm() {
-    document.getElementById("form").style.display = "block";
-    document.getElementById("home").style.display = "none";
-  }
-
-  function showHome() {
-    document.getElementById("form").style.display = "none";
-    document.getElementById("home").style.display = "block";
-  }
-
-  render();
+function loadMyPosts(){
+  dashboard.innerHTML="<h3>إعلاناتي</h3>";
+  db.collection("posts").where("uid","==",currentUser.uid)
+  .onSnapshot(s=>{
+    s.forEach(d=>{
+      const p=d.data();
+      dashboard.innerHTML+=`
+      <div class="card">
+      ${p.title}
+      <button onclick="db.collection('posts').doc('${d.id}').delete()">حذف</button>
+      </div>`;
+    });
+  });
+}
 </script>
 
 </body>
