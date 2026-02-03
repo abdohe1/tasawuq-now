@@ -7,7 +7,7 @@
 
 <style>
 *{box-sizing:border-box;font-family:Tajawal,Arial}
-body{margin:0;background:#f2f4f8;color:#222}
+body{margin:0;background:#f2f4f8}
 
 /* HEADER */
 header{
@@ -18,86 +18,20 @@ header{
   border-bottom-left-radius:24px;
   border-bottom-right-radius:24px;
 }
-header h1{margin:0;font-size:24px}
+header h1{margin:0}
 nav button{
   background:#fff;
   color:#0d6efd;
   border:none;
-  padding:10px 18px;
+  padding:10px 16px;
   margin:5px;
   border-radius:14px;
   font-weight:bold;
 }
 
-/* SEARCH */
-.search{padding:15px}
-.search input{
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:none;
-  font-size:16px;
-  box-shadow:0 6px 15px rgba(0,0,0,.08);
-}
-
-/* CATEGORIES */
-.categories{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  padding:0 15px;
-}
-.cat{
-  background:#fff;
-  padding:14px 6px;
-  text-align:center;
-  border-radius:18px;
-  font-weight:bold;
-  box-shadow:0 6px 15px rgba(0,0,0,.08);
-}
-
-/* POSTS */
-.container{padding:15px}
-.post{
-  background:#fff;
-  border-radius:20px;
-  padding:15px;
-  margin-bottom:18px;
-  box-shadow:0 8px 20px rgba(0,0,0,.08);
-}
-.post img{
-  width:100%;
-  height:200px;
-  object-fit:cover;
-  border-radius:16px;
-  margin-bottom:10px;
-}
-.post h3{margin:6px 0;font-size:18px}
-.price{color:#198754;font-weight:bold;font-size:20px}
-
-/* ACTIONS */
-.actions{
-  display:flex;
-  gap:10px;
-  margin-top:10px;
-}
-.actions button,a{
-  flex:1;
-  padding:12px;
-  border:none;
-  border-radius:14px;
-  font-weight:bold;
-  text-align:center;
-  text-decoration:none;
-  color:#fff;
-}
-.edit{background:#198754}
-.delete{background:#dc3545}
-.whatsapp{background:#25D366}
-.call{background:#0d6efd}
-
-/* FORM & DETAILS */
-#form,#details{display:none;padding:15px}
+/* COMMON */
+.page{display:none;padding:15px}
+#home{display:block}
 input,select{
   width:100%;
   padding:12px;
@@ -105,7 +39,74 @@ input,select{
   border-radius:12px;
   border:1px solid #ddd;
 }
-button:active{transform:scale(.97)}
+
+/* SEARCH */
+.search input{border:none}
+
+/* CATEGORIES */
+.categories{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.cat{
+  background:#fff;
+  padding:14px;
+  border-radius:16px;
+  text-align:center;
+  font-weight:bold;
+}
+
+/* POSTS */
+.post{
+  background:#fff;
+  border-radius:18px;
+  padding:15px;
+  margin:15px 0;
+}
+.price{color:#198754;font-weight:bold}
+
+/* BUTTONS */
+.actions{display:flex;gap:10px;margin-top:10px}
+button{
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+}
+.edit{background:#198754;color:#fff}
+.delete{background:#dc3545;color:#fff}
+.chat{background:#0d6efd;color:#fff}
+
+/* CHAT */
+.chat-box{
+  background:#fff;
+  border-radius:18px;
+  padding:10px;
+  height:300px;
+  overflow-y:auto;
+  margin-bottom:10px;
+}
+.msg{
+  margin:5px 0;
+  padding:8px 12px;
+  border-radius:14px;
+  max-width:80%;
+}
+.me{background:#0d6efd;color:#fff;margin-left:auto}
+.other{background:#eee}
+
+/* BOTTOM */
+.bottom{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:#fff;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  border-top:1px solid #ddd;
+}
+body{padding-bottom:70px}
 </style>
 </head>
 
@@ -114,151 +115,133 @@ button:active{transform:scale(.97)}
 <header>
   <h1>🛒 تسوق الآن</h1>
   <nav>
-    <button onclick="showHome()">الرئيسية</button>
-    <button onclick="showForm()">إضافة إعلان</button>
+    <button onclick="show('home')">الرئيسية</button>
+    <button onclick="show('add')">إضافة إعلان</button>
+    <button onclick="show('dashboard')">لوحة التحكم</button>
   </nav>
 </header>
 
 <!-- HOME -->
-<div id="home">
+<div id="home" class="page">
   <div class="search">
-    <input id="search" placeholder="🔍 ابحث..." oninput="render()">
+    <input id="search" placeholder="🔍 ابحث" oninput="render()">
   </div>
 
   <div class="categories">
-    <div class="cat" onclick="setCategory('all')">📦 الكل</div>
-    <div class="cat" onclick="setCategory('سيارات')">🚗 سيارات</div>
-    <div class="cat" onclick="setCategory('دراجات')">🏍️ دراجات</div>
-    <div class="cat" onclick="setCategory('ألعاب')">🎮 ألعاب</div>
-    <div class="cat" onclick="setCategory('عقارات')">🏠 عقارات</div>
-    <div class="cat" onclick="setCategory('وظائف')">💼 وظائف</div>
+    <div class="cat" onclick="setCat('all')">الكل</div>
+    <div class="cat" onclick="setCat('سيارات')">سيارات</div>
+    <div class="cat" onclick="setCat('دراجات')">دراجات</div>
+    <div class="cat" onclick="setCat('ألعاب')">ألعاب</div>
   </div>
 
-  <div class="container" id="posts"></div>
+  <div id="posts"></div>
 </div>
 
-<!-- FORM -->
-<div id="form">
-  <h2 id="formTitle">إضافة إعلان</h2>
-  <input id="title" placeholder="عنوان الإعلان">
-  <input id="desc" placeholder="الوصف">
-  <input id="price" type="number" placeholder="السعر">
+<!-- ADD -->
+<div id="add" class="page">
+  <h3>إضافة إعلان</h3>
+  <input id="username" placeholder="اسمك">
+  <input id="title" placeholder="العنوان">
+  <input id="price" placeholder="السعر">
   <select id="category">
     <option>سيارات</option>
     <option>دراجات</option>
     <option>ألعاب</option>
-    <option>عقارات</option>
-    <option>وظائف</option>
   </select>
-  <input id="phone" placeholder="رقم واتساب">
-  <input id="image" type="file" accept="image/*">
-  <button onclick="save()" class="edit">حفظ الإعلان</button>
+  <button class="edit" onclick="save()">حفظ</button>
 </div>
 
-<!-- DETAILS -->
-<div id="details">
-  <button onclick="showHome()">⬅ رجوع</button>
-  <div class="post">
-    <img id="dImage" style="display:none">
-    <h2 id="dTitle"></h2>
-    <p id="dDesc"></p>
-    <div id="dCategory"></div>
-    <div class="price" id="dPrice"></div>
-    <div class="actions">
-      <a id="whatsappBtn" class="whatsapp" target="_blank">💬 واتساب</a>
-      <a id="callBtn" class="call">📞 اتصال</a>
-    </div>
-  </div>
+<!-- DASHBOARD -->
+<div id="dashboard" class="page">
+  <h3>إعلاناتي</h3>
+  <div id="myPosts"></div>
+</div>
+
+<!-- CHAT -->
+<div id="chat" class="page">
+  <h3 id="chatTitle"></h3>
+  <div class="chat-box" id="chatBox"></div>
+  <input id="msgInput" placeholder="اكتب رسالة">
+  <button class="chat" onclick="sendMsg()">إرسال</button>
+</div>
+
+<div class="bottom">
+  <button onclick="show('home')">🏠</button>
+  <button onclick="show('add')">➕</button>
+  <button onclick="show('dashboard')">👤</button>
 </div>
 
 <script>
-let posts = JSON.parse(localStorage.getItem("posts")) || [];
-let editIndex = null;
-let imageData = "";
-let currentCategory = "all";
+let posts = JSON.parse(localStorage.getItem("posts"))||[];
+let chats = JSON.parse(localStorage.getItem("chats"))||{};
+let currentCat="all";
+let currentChat=null;
 
-const home=document.getElementById("home");
-const form=document.getElementById("form");
-const details=document.getElementById("details");
-const postsBox=document.getElementById("posts");
-
-const titleInput=document.getElementById("title");
-const descInput=document.getElementById("desc");
-const priceInput=document.getElementById("price");
-const categoryInput=document.getElementById("category");
-const phoneInput=document.getElementById("phone");
-
-image.addEventListener("change",e=>{
-  const reader=new FileReader();
-  reader.onload=()=>imageData=reader.result;
-  reader.readAsDataURL(e.target.files[0]);
-});
-
-function showHome(){
-  home.style.display="block";
-  form.style.display="none";
-  details.style.display="none";
+function show(id){
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  document.getElementById(id).style.display='block';
 }
 
-function showForm(){
-  home.style.display="none";
-  form.style.display="block";
-}
-
-function setCategory(c){
-  currentCategory=c;
-  render();
-}
+function setCat(c){currentCat=c;render();}
 
 function save(){
-  const post={
-    title:titleInput.value,
-    desc:descInput.value,
-    price:priceInput.value,
-    category:categoryInput.value,
-    phone:phoneInput.value,
-    image:imageData
-  };
-  if(editIndex===null) posts.push(post);
-  else posts[editIndex]=post, editIndex=null;
-
+  if(!username.value||!title.value||!price.value)return alert("أكمل البيانات");
+  posts.push({
+    user:username.value,
+    title:title.value,
+    price:price.value,
+    category:category.value,
+    id:Date.now()
+  });
   localStorage.setItem("posts",JSON.stringify(posts));
-  clearForm(); showHome(); render();
+  render(); show('home');
 }
 
 function render(){
+  postsDiv.innerHTML="";
   const q=search.value.toLowerCase();
-  postsBox.innerHTML="";
   posts.filter(p=>
-    (currentCategory==="all"||p.category===currentCategory)&&
+    (currentCat==="all"||p.category===currentCat)&&
     p.title.toLowerCase().includes(q)
-  ).forEach((p,i)=>{
-    postsBox.innerHTML+=`
-    <div class="post" onclick="openDetails(${i})">
-      ${p.image?`<img src="${p.image}">`:""}
-      <h3>${p.title}</h3>
+  ).forEach(p=>{
+    postsDiv.innerHTML+=`
+    <div class="post">
+      <b>${p.title}</b>
       <div>${p.category}</div>
-      <div class="price">💰 ${p.price}</div>
+      <div class="price">${p.price}</div>
+      <button class="chat" onclick="openChat(${p.id},'${p.title}')">دردشة</button>
     </div>`;
   });
 }
 
-function openDetails(i){
-  const p=posts[i];
-  dTitle.innerText=p.title;
-  dDesc.innerText=p.desc;
-  dCategory.innerText=p.category;
-  dPrice.innerText="💰 "+p.price;
-  if(p.image){dImage.src=p.image;dImage.style.display="block";}
-  whatsappBtn.href="https://wa.me/"+p.phone;
-  callBtn.href="tel:"+p.phone;
-  home.style.display="none";
-  details.style.display="block";
+function openChat(id,title){
+  currentChat=id;
+  chatTitle.innerText="دردشة: "+title;
+  renderChat();
+  show('chat');
 }
 
-function clearForm(){
-  titleInput.value=descInput.value=priceInput.value=phoneInput.value="";
-  image.value=""; imageData="";
+function renderChat(){
+  chatBox.innerHTML="";
+  (chats[currentChat]||[]).forEach(m=>{
+    chatBox.innerHTML+=`<div class="msg ${m.me?'me':'other'}">${m.text}</div>`;
+  });
+}
+
+function sendMsg(){
+  if(!msgInput.value)return;
+  chats[currentChat]=chats[currentChat]||[];
+  chats[currentChat].push({text:msgInput.value,me:true});
+  localStorage.setItem("chats",JSON.stringify(chats));
+  msgInput.value="";
+  renderChat();
+}
+
+function loadDashboard(){
+  myPosts.innerHTML="";
+  posts.forEach(p=>{
+    myPosts.innerHTML+=`<div class="post">${p.title} - ${p.price}</div>`;
+  });
 }
 
 render();
