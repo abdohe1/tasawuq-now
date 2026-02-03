@@ -14,6 +14,77 @@ if ("serviceWorker" in navigator) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+  <script>
+let posts = [];
+let editIndex = null;
+
+function showHome(){
+  document.getElementById("form").style.display="none";
+  document.getElementById("home").style.display="block";
+  clearForm();
+}
+
+function showForm(){
+  document.getElementById("home").style.display="none";
+  document.getElementById("form").style.display="block";
+}
+
+function save(){
+  const title = document.getElementById("title").value;
+  const desc = document.getElementById("desc").value;
+  const price = document.getElementById("price").value;
+
+  if(editIndex === null){
+    posts.push({title, desc, price});
+  }else{
+    posts[editIndex] = {title, desc, price};
+    editIndex = null;
+    document.getElementById("formTitle").innerText="إضافة إعلان";
+  }
+
+  render();
+  showHome();
+}
+
+function edit(i){
+  const p = posts[i];
+  document.getElementById("title").value = p.title;
+  document.getElementById("desc").value = p.desc;
+  document.getElementById("price").value = p.price;
+  editIndex = i;
+  document.getElementById("formTitle").innerText="تعديل الإعلان";
+  showForm();
+}
+
+function removePost(i){
+  if(confirm("حذف الإعلان؟")){
+    posts.splice(i,1);
+    render();
+  }
+}
+
+function clearForm(){
+  document.getElementById("title").value="";
+  document.getElementById("desc").value="";
+  document.getElementById("price").value="";
+}
+
+function render(){
+  const list = document.getElementById("list");
+  list.innerHTML="";
+  posts.forEach((p,i)=>{
+    list.innerHTML += `
+      <div class="card">
+        <h3>${p.title}</h3>
+        <p>${p.desc}</p>
+        <strong>💰 ${p.price}</strong><br><br>
+        <button onclick="edit(${i})">تعديل</button>
+        <button onclick="removePost(${i})">حذف</button>
+      </div>
+    `;
+  });
+}
+</script>
 body{
   margin:0;
   font-family:Arial, sans-serif;
@@ -61,8 +132,6 @@ button.delete{background:#dc3545}
 button.edit{background:#198754}
 </style>
 </head>
-
-<body>
 
 <header>
   <h2>🛒 تسوّق الآن</h2>
@@ -198,6 +267,5 @@ function clearForm(){
 
 render();
 </script>
-
 </body>
 </html>
