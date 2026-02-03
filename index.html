@@ -1,187 +1,120 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تسوق الآن</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسوّق الآن</title>
 
-<style>
-* {
-  box-sizing: border-box;
-  font-family: "Tajawal", Arial, sans-serif;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Tahoma, Arial;
+    }
 
-body {
-  margin: 0;
-  background: #f2f4f8;
-  color: #222;
-}
+    body {
+      margin: 0;
+      background: #f2f4f8;
+      color: #222;
+    }
 
-header {
-  background: linear-gradient(135deg, #0d6efd, #0a58ca);
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
+    header {
+      background: linear-gradient(135deg, #0d6efd, #0a58ca);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
 
-header h1 {
-  margin: 0;
-  font-size: 26px;
-}
+    header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
 
-nav {
-  margin-top: 10px;
-}
+    nav {
+      margin-top: 10px;
+    }
 
-nav button {
-  background: white;
-  color: #0d6efd;
-  border: none;
-  padding: 10px 16px;
-  margin: 5px;
-  border-radius: 10px;
-  font-weight: bold;
-}
+    nav button {
+      background: white;
+      color: #0d6efd;
+      border: none;
+      padding: 10px 16px;
+      margin: 5px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-.container {
-  padding: 15px;
-}
+    .container {
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 15px;
+    }
 
-.card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-  margin-bottom: 20px;
-  overflow: hidden;
-}
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
 
-.card img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-}
+    .card img {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
 
-.card-body {
-  padding: 15px;
-}
+    .price {
+      color: green;
+      font-size: 18px;
+      font-weight: bold;
+    }
 
-.price {
-  color: #198754;
-  font-size: 20px;
-  font-weight: bold;
-}
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
 
-.actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
+    .actions button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-.actions button {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-}
+    .edit {
+      background: #198754;
+      color: white;
+    }
 
-.edit {
-  background: #198754;
-  color: white;
-}
+    .delete {
+      background: #dc3545;
+      color: white;
+    }
 
-.delete {
-  background: #dc3545;
-  color: white;
-}
-</style>
-header{
-  background:#0d6efd;
-  color:#fff;
-  padding:16px;
-  text-align:center;
-}
-header h1{
-  margin:0;
-  font-size:22px;
-}
-nav{
-  margin-top:10px;
-}
-nav button{
-  background:#fff;
-  color:#0d6efd;
-  border:none;
-  padding:8px 14px;
-  margin:4px;
-  border-radius:6px;
-  font-weight:bold;
-}
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
 
-.container{
-  padding:16px;
-}
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
 
-.card{
-  background:#fff;
-  border-radius:10px;
-  margin-bottom:16px;
-  overflow:hidden;
-  box-shadow:0 2px 6px rgba(0,0,0,.1);
-}
-.card img{
-  width:100%;
-  height:200px;
-  object-fit:cover;
-}
-.card-body{
-  padding:12px;
-}
-.price{
-  color:#198754;
-  font-size:18px;
-  font-weight:bold;
-}
-.actions{
-  display:flex;
-  gap:10px;
-  margin-top:10px;
-}
-.actions button{
-  flex:1;
-  border:none;
-  padding:8px;
-  border-radius:6px;
-  font-weight:bold;
-}
-.edit{background:#198754;color:#fff;}
-.delete{background:#dc3545;color:#fff;}
-
-form{
-  background:#fff;
-  padding:16px;
-  border-radius:10px;
-}
-input,textarea{
-  width:100%;
-  padding:10px;
-  margin-bottom:10px;
-  border-radius:6px;
-  border:1px solid #ccc;
-}
-.save{
-  background:#0d6efd;
-  color:#fff;
-  border:none;
-  padding:10px;
-  width:100%;
-  border-radius:6px;
-  font-size:16px;
-}
-.hidden{display:none;}
-</style>
+    #preview {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+  </style>
 </head>
-
 <body>
 
 <header>
@@ -192,123 +125,135 @@ input,textarea{
   </nav>
 </header>
 
-<div class="container">
+<!-- الصفحة الرئيسية -->
+<div id="home" class="container"></div>
 
-  <!-- الصفحة الرئيسية -->
-  <div id="home"></div>
+<!-- نموذج الإضافة / التعديل -->
+<div id="form" class="container" style="display:none">
+  <div class="card">
+    <h2 id="formTitle">إضافة إعلان</h2>
 
-  <!-- نموذج الإعلان -->
-  <form id="form" class="hidden">
-    <h3 id="formTitle">إضافة إعلان</h3>
     <input id="title" placeholder="عنوان الإعلان">
     <textarea id="desc" placeholder="وصف الإعلان"></textarea>
     <input id="price" type="number" placeholder="السعر">
-    <input id="image" type="file" accept="image/*">
-    <button type="button" class="save" onclick="save()">حفظ</button>
-  </form>
+    <input id="image" type="file">
+    <img id="preview">
 
+    <div class="actions">
+      <button class="edit" onclick="save()">حفظ</button>
+      <button class="delete" onclick="showHome()">إلغاء</button>
+    </div>
+  </div>
 </div>
 
 <script>
-let posts = JSON.parse(localStorage.getItem("posts")||"[]");
-let editIndex = null;
-let imageData = "";
+  let posts = JSON.parse(localStorage.getItem("posts")) || [];
+  let editIndex = null;
+  let imageData = "";
 
-document.getElementById("image").addEventListener("change",function(){
-  const reader = new FileReader();
-  reader.onload = ()=> imageData = reader.result;
-  reader.readAsDataURL(this.files[0]);
-});
-
-function render(){
   const home = document.getElementById("home");
-  home.innerHTML = "";
-  posts.forEach((p,i)=>{
-    home.innerHTML += `
-      <div class="card">
-        <img src="${p.image}">
-        <div class="card-body">
+  const form = document.getElementById("form");
+  const titleInput = document.getElementById("title");
+  const descInput = document.getElementById("desc");
+  const priceInput = document.getElementById("price");
+  const preview = document.getElementById("preview");
+
+  document.getElementById("image").addEventListener("change", function () {
+    const file = this.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      imageData = reader.result;
+      preview.src = imageData;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function render() {
+    home.innerHTML = "";
+
+    if (posts.length === 0) {
+      home.innerHTML = "<p>لا توجد إعلانات</p>";
+      return;
+    }
+
+    posts.forEach((p, i) => {
+      home.innerHTML += `
+        <div class="card">
+          ${p.image ? `<img src="${p.image}">` : ""}
           <h3>${p.title}</h3>
           <p>${p.desc}</p>
           <div class="price">💰 ${p.price}</div>
+
           <div class="actions">
-            <button class="edit" onclick="edit(${i})">تعديل</button>
+            <button class="edit" onclick="editPost(${i})">تعديل</button>
             <button class="delete" onclick="removePost(${i})">حذف</button>
           </div>
         </div>
-      </div>
-    `;
-  });
-  localStorage.setItem("posts",JSON.stringify(posts));
-}
+      `;
+    });
 
-function showForm(){
-  document.getElementById("home").classList.add("hidden");
-  document.getElementById("form").classList.remove("hidden");
-}
-
-function showHome(){
-  document.getElementById("form").classList.add("hidden");
-  document.getElementById("home").classList.remove("hidden");
-  clearForm();
-}
-
-function save(){
-  const title = titleInput.value;
-  const desc = descInput.value;
-  const price = priceInput.value;
-
-  if(editIndex === null){
-    posts.push({title,desc,price,image:imageData});
-  }else{
-    posts[editIndex] = {title,desc,price,image:imageData};
-    editIndex = null;
+    localStorage.setItem("posts", JSON.stringify(posts));
   }
-  render();
-  showHome();
-}
 
-function edit(i){
-  const p = posts[i];
-  titleInput.value = p.title;
-  descInput.value = p.desc;
-  priceInput.value = p.price;
-  imageData = p.image;
-  editIndex = i;
-  showForm();
-}
+  function showForm() {
+    home.style.display = "none";
+    form.style.display = "block";
+  }
 
-function removePost(i){
-  if(confirm("حذف الإعلان؟")){
-    posts.splice(i,1);
+  function showHome() {
+    form.style.display = "none";
+    home.style.display = "block";
+    clearForm();
+  }
+
+  function save() {
+    const post = {
+      title: titleInput.value,
+      desc: descInput.value,
+      price: priceInput.value,
+      image: imageData
+    };
+
+    if (editIndex === null) {
+      posts.push(post);
+    } else {
+      posts[editIndex] = post;
+      editIndex = null;
+    }
+
     render();
+    showHome();
   }
-}
 
-function clearForm(){
-  titleInput.value="";
-  descInput.value="";
-  priceInput.value="";
-  imageData="";
-}
+  function editPost(i) {
+    const p = posts[i];
+    titleInput.value = p.title;
+    descInput.value = p.desc;
+    priceInput.value = p.price;
+    imageData = p.image;
+    preview.src = p.image;
+    editIndex = i;
+    document.getElementById("formTitle").innerText = "تعديل الإعلان";
+    showForm();
+  }
 
-const titleInput = document.getElementById("title");
-const descInput = document.getElementById("desc");
-const priceInput = document.getElementById("price");
+  function removePost(i) {
+    if (confirm("حذف الإعلان؟")) {
+      posts.splice(i, 1);
+      render();
+    }
+  }
 
-render();
-<div id="form" style="display:none" class="container">
-  <h2 id="formTitle">إضافة إعلان</h2>
+  function clearForm() {
+    titleInput.value = "";
+    descInput.value = "";
+    priceInput.value = "";
+    imageData = "";
+    preview.src = "";
+    document.getElementById("formTitle").innerText = "إضافة إعلان";
+  }
 
-  <input id="title" placeholder="عنوان الإعلان">
-  <textarea id="desc" placeholder="وصف الإعلان"></textarea>
-  <input id="price" type="number" placeholder="السعر">
-  <input id="image" type="file">
-  <img id="preview" style="max-width:100%; margin-top:10px">
-
-  <button onclick="save()">حفظ</button>
-  <button onclick="showHome()">إلغاء</button>
-</div>
+  render();
 </script>
 
 </body>
