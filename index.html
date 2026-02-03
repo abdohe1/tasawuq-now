@@ -1,226 +1,160 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تسوق الآن</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Abdo Store | متجر Abdo</title>
 
-<style>
-body {
-  margin: 0;
-  font-family: Tahoma, Arial;
-  background: #f4f6f8;
-}
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
 
-header {
-  background: linear-gradient(135deg,#0d6efd,#0a58ca);
-  color: white;
-  text-align: center;
-  padding: 20px;
-}
+  <style>
+    :root {
+      --blue: #1e90ff;
+      --red: #e10600;
+      --black: #0f0f0f;
+      --gray: #1a1a1a;
+      --text: #ffffff;
+    }
 
-header h1 {
-  margin: 0;
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-nav button {
-  margin: 5px;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 12px;
-  font-weight: bold;
-  cursor: pointer;
-}
+    body {
+      font-family: 'Cairo', 'Inter', sans-serif;
+      background: var(--black);
+      color: var(--text);
+      line-height: 1.6;
+    }
 
-.container {
-  padding: 15px;
-}
+    header {
+      background: #000;
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-.search {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  margin-bottom: 15px;
-}
+    header h1 {
+      color: var(--blue);
+      font-size: 24px;
+    }
 
-.card {
-  background: white;
-  border-radius: 15px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,.08);
-}
+    .lang-btn {
+      background: none;
+      border: 1px solid var(--blue);
+      color: var(--blue);
+      padding: 6px 12px;
+      cursor: pointer;
+    }
 
-.card img {
-  width: 100%;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
+    .hero {
+      text-align: center;
+      padding: 100px 20px;
+      background: linear-gradient(180deg, #000, #111);
+    }
 
-.card h3 {
-  margin: 5px 0;
-}
+    .hero h2 {
+      font-size: 42px;
+      margin-bottom: 15px;
+    }
 
-.price {
-  color: green;
-  font-weight: bold;
-}
+    .hero p {
+      color: #ccc;
+      margin-bottom: 30px;
+    }
 
-.actions button {
-  width: 48%;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  color: white;
-}
+    .cta {
+      background: var(--red);
+      color: #fff;
+      padding: 14px 40px;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
 
-.delete { background: #dc3545; }
-.edit { background: #198754; }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+      gap: 20px;
+      padding: 60px 40px;
+      background: var(--gray);
+      text-align: center;
+    }
 
-#form, #admin { display: none; }
+    .feature {
+      background: #000;
+      padding: 30px;
+      border-radius: 6px;
+    }
 
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-</style>
+    .feature h3 {
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    footer {
+      background: #000;
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-  <h1>🛒 تسوق الآن</h1>
-  <nav>
-    <button onclick="showHome()">الرئيسية</button>
-    <button onclick="showForm()">إضافة إعلان</button>
-    <button onclick="showAdmin()">لوحة التحكم</button>
-    <button onclick="login()">تسجيل دخول</button>
-    <button onclick="logout()">خروج</button>
-  </nav>
+  <h1 id="logo">Abdo Store</h1>
+  <button class="lang-btn" onclick="toggleLang()">EN</button>
 </header>
 
-<div class="container" id="home">
-  <input class="search" placeholder="ابحث..." oninput="searchPosts(this.value)">
-  <div id="posts"></div>
-</div>
+<section class="hero">
+  <h2 id="title">متجر Abdo</h2>
+  <p id="subtitle">أفضل المنتجات بأفضل سعر</p>
+  <button class="cta" id="cta">تسوّق الآن</button>
+</section>
 
-<div class="container" id="form">
-  <h2 id="formTitle">إضافة إعلان</h2>
-  <input id="title" placeholder="العنوان">
-  <input id="price" placeholder="السعر">
-  <input type="file" id="image">
-  <button onclick="savePost()">حفظ</button>
-</div>
+<section class="features">
+  <div class="feature">
+    <h3 id="f1">توصيل سريع</h3>
+    <p>نوصل طلبك بأسرع وقت</p>
+  </div>
+  <div class="feature">
+    <h3 id="f2">دفع آمن</h3>
+    <p>وسائل دفع موثوقة</p>
+  </div>
+  <div class="feature">
+    <h3 id="f3">جودة مضمونة</h3>
+    <p>منتجات مختارة بعناية</p>
+  </div>
+</section>
 
-<div class="container" id="admin">
-  <h2>لوحة التحكم</h2>
-  <div id="adminPosts"></div>
-</div>
+<footer>
+  © 2026 Abdo Store
+</footer>
 
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<script>
+  let isArabic = true;
 
-const firebaseConfig = {
-  apiKey: "PUT_API_KEY",
-  authDomain: "PUT_AUTH_DOMAIN",
-  projectId: "PUT_PROJECT_ID"
-};
+  function toggleLang() {
+    isArabic = !isArabic;
+    document.documentElement.lang = isArabic ? "ar" : "en";
+    document.documentElement.dir = isArabic ? "rtl" : "ltr";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    document.getElementById("title").innerText = isArabic ? "متجر Abdo" : "Abdo Store";
+    document.getElementById("subtitle").innerText = isArabic ? "أفضل المنتجات بأفضل سعر" : "Best Products at the Best Prices";
+    document.getElementById("cta").innerText = isArabic ? "تسوّق الآن" : "Shop Now";
+    document.getElementById("f1").innerText = isArabic ? "توصيل سريع" : "Fast Delivery";
+    document.getElementById("f2").innerText = isArabic ? "دفع آمن" : "Secure Payment";
+    document.getElementById("f3").innerText = isArabic ? "جودة مضمونة" : "Guaranteed Quality";
 
-let posts = [];
-let editId = null;
-let imageData = "";
-
-const postsBox = document.getElementById("posts");
-const adminBox = document.getElementById("adminPosts");
-
-document.getElementById("image").addEventListener("change", e => {
-  const reader = new FileReader();
-  reader.onload = () => imageData = reader.result;
-  reader.readAsDataURL(e.target.files[0]);
-});
-
-async function loadPosts() {
-  postsBox.innerHTML = "تحميل...";
-  posts = [];
-  const snap = await getDocs(collection(db,"posts"));
-  snap.forEach(d => posts.push({id:d.id,...d.data()}));
-  render(posts);
-}
-
-function render(list) {
-  postsBox.innerHTML = "";
-  list.forEach((p,i)=>{
-    postsBox.innerHTML += `
-      <div class="card">
-        ${p.image ? `<img src="${p.image}">` : ""}
-        <h3>${p.title}</h3>
-        <div class="price">${p.price} 💰</div>
-      </div>
-    `;
-  });
-}
-
-window.savePost = async () => {
-  const title = title.value;
-  const price = price.value;
-  if(!title || !price) return alert("املأ الحقول");
-
-  await addDoc(collection(db,"posts"),{title,price,image:imageData});
-  showHome();
-  loadPosts();
-}
-
-window.searchPosts = v => {
-  render(posts.filter(p=>p.title.includes(v)));
-}
-
-window.showHome = () => {
-  home.style.display="block";
-  form.style.display="none";
-  admin.style.display="none";
-}
-
-window.showForm = () => {
-  form.style.display="block";
-  home.style.display="none";
-  admin.style.display="none";
-}
-
-window.showAdmin = async () => {
-  admin.style.display="block";
-  home.style.display="none";
-  form.style.display="none";
-  adminBox.innerHTML="";
-  const snap = await getDocs(collection(db,"posts"));
-  snap.forEach(d=>{
-    adminBox.innerHTML+=`
-      <div class="card">
-        <h3>${d.data().title}</h3>
-        <button onclick="deletePost('${d.id}')">حذف</button>
-      </div>`;
-  });
-}
-
-window.deletePost = async id => {
-  if(confirm("حذف الإعلان؟")){
-    await deleteDoc(doc(db,"posts",id));
-    showAdmin();
+    document.querySelector(".lang-btn").innerText = isArabic ? "EN" : "AR";
   }
-}
-
-window.login = () => signInAnonymously(auth);
-window.logout = () => signOut(auth);
-
-loadPosts();
 </script>
 
 </body>
