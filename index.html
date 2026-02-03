@@ -2,13 +2,13 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>تسوّق الآن</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسوق الآن</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
     * {
       box-sizing: border-box;
-      font-family: Tahoma, Arial, sans-serif;
+      font-family: Tahoma, Arial;
     }
 
     body {
@@ -19,9 +19,9 @@
 
     header {
       background: linear-gradient(135deg, #0d6efd, #0a58ca);
-      color: #fff;
-      text-align: center;
+      color: white;
       padding: 20px;
+      text-align: center;
     }
 
     header h1 {
@@ -34,10 +34,10 @@
     }
 
     nav button {
-      background: #fff;
+      background: white;
       color: #0d6efd;
       border: none;
-      padding: 10px 18px;
+      padding: 10px 16px;
       margin: 5px;
       border-radius: 10px;
       font-weight: bold;
@@ -45,21 +45,23 @@
     }
 
     .container {
-      max-width: 600px;
-      margin: 20px auto;
       padding: 15px;
+      max-width: 900px;
+      margin: auto;
     }
 
     .card {
-      background: #fff;
+      background: white;
       border-radius: 15px;
       padding: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
     }
 
     .card img {
       width: 100%;
+      max-height: 220px;
+      object-fit: cover;
       border-radius: 10px;
       margin-bottom: 10px;
     }
@@ -81,39 +83,41 @@
       padding: 10px;
       border: none;
       border-radius: 10px;
+      color: white;
       font-weight: bold;
       cursor: pointer;
     }
 
     .delete {
       background: #dc3545;
-      color: #fff;
     }
 
     .edit {
       background: #198754;
-      color: #fff;
+    }
+
+    #form {
+      display: none;
     }
 
     input, textarea {
       width: 100%;
       padding: 10px;
       margin-bottom: 10px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid #ccc;
     }
 
     input[type="file"] {
-      border: none;
+      padding: 5px;
     }
 
     .save {
       background: #0d6efd;
-      color: #fff;
+      color: white;
       border: none;
-      width: 100%;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 16px;
       cursor: pointer;
     }
@@ -123,7 +127,7 @@
 <body>
 
 <header>
-  <h1>🛒 تسوّق الآن</h1>
+  <h1>🛒 تسوق الآن</h1>
   <nav>
     <button onclick="showHome()">الرئيسية</button>
     <button onclick="showForm()">إضافة إعلان</button>
@@ -136,16 +140,15 @@
   <div id="home"></div>
 
   <!-- نموذج الإضافة -->
-  <div id="form" style="display:none">
-    <div class="card">
-      <h3 id="formTitle">إضافة إعلان</h3>
-      <input id="title" placeholder="عنوان الإعلان">
-      <textarea id="desc" placeholder="الوصف"></textarea>
-      <input id="price" type="number" placeholder="السعر">
-      <input id="image" type="file" accept="image/*">
-      <img id="preview" style="display:none">
-      <button class="save" onclick="save()">حفظ</button>
-    </div>
+  <div id="form" class="card">
+    <h3 id="formTitle">إضافة إعلان</h3>
+
+    <input id="title" placeholder="عنوان الإعلان">
+    <textarea id="desc" placeholder="الوصف"></textarea>
+    <input id="price" type="number" placeholder="السعر">
+    <input id="image" type="file" accept="image/*">
+
+    <button class="save" onclick="save()">حفظ</button>
   </div>
 
 </div>
@@ -156,33 +159,18 @@
   let imageData = "";
 
   const home = document.getElementById("home");
-  const form = document.getElementById("form");
-
-  const titleInput = document.getElementById("title");
-  const descInput = document.getElementById("desc");
-  const priceInput = document.getElementById("price");
-
-  document.getElementById("image").addEventListener("change", function () {
-    const file = this.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      imageData = reader.result;
-      const preview = document.getElementById("preview");
-      preview.src = imageData;
-      preview.style.display = "block";
-    };
-    reader.readAsDataURL(file);
-  });
 
   function render() {
     home.innerHTML = "";
+
     posts.forEach((p, i) => {
       home.innerHTML += `
         <div class="card">
           ${p.image ? `<img src="${p.image}">` : ""}
           <h3>${p.title}</h3>
           <p>${p.desc}</p>
-          <div class="price">💰 ${p.price}</div>
+          <div class="price">${p.price} 💰</div>
+
           <div class="actions">
             <button class="delete" onclick="removePost(${i})">حذف</button>
             <button class="edit" onclick="editPost(${i})">تعديل</button>
@@ -190,22 +178,37 @@
         </div>
       `;
     });
+
     localStorage.setItem("posts", JSON.stringify(posts));
   }
 
+  document.getElementById("image").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => imageData = reader.result;
+    reader.readAsDataURL(file);
+  });
+
   function save() {
-    const post = {
-      title: titleInput.value,
-      desc: descInput.value,
-      price: priceInput.value,
-      image: imageData
-    };
+    const title = document.getElementById("title").value;
+    const desc = document.getElementById("desc").value;
+    const price = document.getElementById("price").value;
+
+    if (!title || !price) {
+      alert("أدخل العنوان والسعر");
+      return;
+    }
+
+    const post = { title, desc, price, image: imageData };
 
     if (editIndex === null) {
       posts.push(post);
     } else {
       posts[editIndex] = post;
       editIndex = null;
+      document.getElementById("formTitle").innerText = "إضافة إعلان";
     }
 
     clearForm();
@@ -215,14 +218,13 @@
 
   function editPost(i) {
     const p = posts[i];
-    titleInput.value = p.title;
-    descInput.value = p.desc;
-    priceInput.value = p.price;
-    imageData = p.image;
-    document.getElementById("preview").src = p.image;
-    document.getElementById("preview").style.display = p.image ? "block" : "none";
+    document.getElementById("title").value = p.title;
+    document.getElementById("desc").value = p.desc;
+    document.getElementById("price").value = p.price;
+    imageData = p.image || "";
     editIndex = i;
-    document.getElementById("formTitle").innerText = "تعديل إعلان";
+
+    document.getElementById("formTitle").innerText = "تعديل الإعلان";
     showForm();
   }
 
@@ -234,22 +236,21 @@
   }
 
   function clearForm() {
-    titleInput.value = "";
-    descInput.value = "";
-    priceInput.value = "";
+    document.getElementById("title").value = "";
+    document.getElementById("desc").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("image").value = "";
     imageData = "";
-    document.getElementById("preview").style.display = "none";
-    document.getElementById("formTitle").innerText = "إضافة إعلان";
-  }
-
-  function showHome() {
-    home.style.display = "block";
-    form.style.display = "none";
   }
 
   function showForm() {
+    document.getElementById("form").style.display = "block";
     home.style.display = "none";
-    form.style.display = "block";
+  }
+
+  function showHome() {
+    document.getElementById("form").style.display = "none";
+    home.style.display = "block";
   }
 
   render();
