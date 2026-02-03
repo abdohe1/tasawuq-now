@@ -1,143 +1,65 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>تسوّق الآن | Shop Now</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>تسوّق الآن</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-
-<style>
-:root{
-  --primary:#0D6EFD;
-  --secondary:#20C997;
-  --bg:#f4f6f9;
-}
-
-body{
-  margin:0;
-  font-family:'Cairo',sans-serif;
-  background:var(--bg);
-}
-
-header{
-  background:var(--primary);
-  color:#fff;
-  padding:15px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-button{
-  cursor:pointer;
-}
-
-.lang button{
-  background:none;
-  border:1px solid #fff;
-  color:#fff;
-  padding:5px 10px;
-  border-radius:5px;
-}
-
-.container{
-  max-width:600px;
-  margin:30px auto;
-  background:#fff;
-  padding:25px;
-  border-radius:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,.1);
-}
-
-input, textarea{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:5px;
-  border:1px solid #ccc;
-}
-
-.submit{
-  background:var(--secondary);
-  color:#fff;
-  border:none;
-  padding:12px;
-  margin-top:15px;
-  width:100%;
-  font-size:16px;
-  border-radius:5px;
-}
-
-.post{
-  margin-top:30px;
-  padding:15px;
-  background:#e9f5ff;
-  border-radius:8px;
-}
-
-.en{display:none;}
-</style>
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#f5f7fa;
+      margin:0;
+      padding:0;
+    }
+    header{
+      background:#0d6efd;
+      color:#fff;
+      padding:20px;
+      text-align:center;
+    }
+    .container{
+      padding:20px;
+    }
+    .card{
+      background:#fff;
+      padding:15px;
+      margin-bottom:15px;
+      border-radius:10px;
+      box-shadow:0 4px 10px rgba(0,0,0,.1);
+    }
+    button{
+      background:#20c997;
+      color:#fff;
+      border:none;
+      padding:10px 15px;
+      border-radius:6px;
+      cursor:pointer;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-  <strong class="ar">تسوّق الآن</strong>
-  <strong class="en">Shop Now</strong>
-
-  <div class="lang">
-    <button onclick="setLang('ar')">AR</button>
-    <button onclick="setLang('en')">EN</button>
-  </div>
+  <h1>🛒 تسوّق الآن</h1>
+  <p>منصّة إعلانات مبسّطة</p>
 </header>
 
 <div class="container">
 
-  <h2 class="ar">إضافة منشور</h2>
-  <h2 class="en">Add Post</h2>
+  <div class="card">
+    <h3>مرحبا بك 👋</h3>
+    <p>هذه أول صفحة تعمل من مشروع تسوّق الآن.</p>
+    <button>إضافة إعلان</button>
+  </div>
 
-  <form onsubmit="return addPost()">
-    <input type="text" id="title" placeholder="عنوان الإعلان" required>
-    <textarea id="desc" placeholder="وصف الإعلان" required></textarea>
-    <button class="submit" type="submit">نشر</button>
-  </form>
-
-  <div id="myPost"></div>
+  <div class="card">
+    <h4>📢 إعلان تجريبي</h4>
+    <p>هنا ستظهر الإعلانات لاحقًا.</p>
+  </div>
 
 </div>
-
-<script>
-function setLang(lang){
-  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  document.querySelectorAll('.ar').forEach(e=>e.style.display = lang==='ar'?'block':'none');
-  document.querySelectorAll('.en').forEach(e=>e.style.display = lang==='en'?'block':'none');
-}
-
-// منع أكثر من منشور
-function addPost(){
-  if(localStorage.getItem("posted")){
-    alert("❌ لا يمكنك إضافة أكثر من منشور واحد");
-    return false;
-  }
-
-  const title = document.getElementById("title").value;
-  const desc = document.getElementById("desc").value;
-
-  const postHTML = `
-    <div class="post">
-      <h3>${title}</h3>
-      <p>${desc}</p>
-    </div>
-  `;
-
-  document.getElementById("myPost").innerHTML = postHTML;
-  localStorage.setItem("posted","true");
-
-  alert("✅ تم نشر إعلانك بنجاح");
-  return false;
-}
-</script>
 
 </body>
 </html>
