@@ -9,15 +9,16 @@
 *{box-sizing:border-box;font-family:Tajawal,Arial}
 body{margin:0;background:#f2f4f8;color:#222}
 
-/* ===== HEADER ===== */
+/* HEADER */
 header{
-  background:linear-gradient(135deg,#0d6efd,#0a58ca);
+  background:#0d6efd;
   color:#fff;
   padding:20px;
   text-align:center;
+  border-bottom-left-radius:24px;
+  border-bottom-right-radius:24px;
 }
-header h1{margin:0;font-size:26px}
-nav{margin-top:10px}
+header h1{margin:0;font-size:24px}
 nav button{
   background:#fff;
   color:#0d6efd;
@@ -28,19 +29,18 @@ nav button{
   font-weight:bold;
 }
 
-/* ===== SEARCH ===== */
-.search{
-  padding:15px;
-}
+/* SEARCH */
+.search{padding:15px}
 .search input{
   width:100%;
   padding:12px;
   border-radius:14px;
   border:none;
   font-size:16px;
+  box-shadow:0 6px 15px rgba(0,0,0,.08);
 }
 
-/* ===== CATEGORIES ===== */
+/* CATEGORIES */
 .categories{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -49,67 +49,63 @@ nav button{
 }
 .cat{
   background:#fff;
-  padding:15px;
+  padding:14px 6px;
   text-align:center;
-  border-radius:16px;
+  border-radius:18px;
   font-weight:bold;
-  box-shadow:0 2px 6px rgba(0,0,0,.1);
+  box-shadow:0 6px 15px rgba(0,0,0,.08);
 }
 
-/* ===== POSTS ===== */
+/* POSTS */
 .container{padding:15px}
 .post{
   background:#fff;
-  border-radius:18px;
+  border-radius:20px;
   padding:15px;
-  margin-bottom:15px;
-  box-shadow:0 4px 10px rgba(0,0,0,.1);
+  margin-bottom:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
 }
 .post img{
   width:100%;
-  border-radius:14px;
+  height:200px;
+  object-fit:cover;
+  border-radius:16px;
   margin-bottom:10px;
 }
-.post h3{margin:5px 0}
-.price{color:green;font-weight:bold}
+.post h3{margin:6px 0;font-size:18px}
+.price{color:#198754;font-weight:bold;font-size:20px}
 
-/* ===== BUTTONS ===== */
+/* ACTIONS */
 .actions{
   display:flex;
   gap:10px;
   margin-top:10px;
 }
-.actions button{
+.actions button,a{
   flex:1;
   padding:12px;
   border:none;
   border-radius:14px;
   font-weight:bold;
+  text-align:center;
+  text-decoration:none;
+  color:#fff;
 }
-.edit{background:#198754;color:#fff}
-.delete{background:#dc3545;color:#fff}
+.edit{background:#198754}
+.delete{background:#dc3545}
+.whatsapp{background:#25D366}
+.call{background:#0d6efd}
 
-/* ===== FORM ===== */
-#form{
-  display:none;
-  padding:15px;
-}
-#form input, #form select{
+/* FORM & DETAILS */
+#form,#details{display:none;padding:15px}
+input,select{
   width:100%;
   padding:12px;
   margin-bottom:10px;
   border-radius:12px;
   border:1px solid #ddd;
 }
-#form button{
-  width:100%;
-  padding:14px;
-  background:#0d6efd;
-  color:#fff;
-  border:none;
-  border-radius:16px;
-  font-size:18px;
-}
+button:active{transform:scale(.97)}
 </style>
 </head>
 
@@ -123,147 +119,147 @@ nav button{
   </nav>
 </header>
 
+<!-- HOME -->
 <div id="home">
-
   <div class="search">
-    <input id="search" placeholder="🔍 ابحث عن إعلان..." oninput="render()">
+    <input id="search" placeholder="🔍 ابحث..." oninput="render()">
   </div>
 
   <div class="categories">
-    <div class="cat">🚗 سيارات</div>
-    <div class="cat">🏍️ دراجات</div>
-    <div class="cat">🎮 ألعاب</div>
-    <div class="cat">🏠 عقارات</div>
-    <div class="cat">💼 وظائف</div>
-    <div class="cat">🛠️ خدمات</div>
+    <div class="cat" onclick="setCategory('all')">📦 الكل</div>
+    <div class="cat" onclick="setCategory('سيارات')">🚗 سيارات</div>
+    <div class="cat" onclick="setCategory('دراجات')">🏍️ دراجات</div>
+    <div class="cat" onclick="setCategory('ألعاب')">🎮 ألعاب</div>
+    <div class="cat" onclick="setCategory('عقارات')">🏠 عقارات</div>
+    <div class="cat" onclick="setCategory('وظائف')">💼 وظائف</div>
   </div>
 
   <div class="container" id="posts"></div>
 </div>
 
+<!-- FORM -->
 <div id="form">
   <h2 id="formTitle">إضافة إعلان</h2>
-
   <input id="title" placeholder="عنوان الإعلان">
   <input id="desc" placeholder="الوصف">
   <input id="price" type="number" placeholder="السعر">
-  
   <select id="category">
     <option>سيارات</option>
     <option>دراجات</option>
     <option>ألعاب</option>
     <option>عقارات</option>
     <option>وظائف</option>
-    <option>خدمات</option>
   </select>
-
+  <input id="phone" placeholder="رقم واتساب">
   <input id="image" type="file" accept="image/*">
+  <button onclick="save()" class="edit">حفظ الإعلان</button>
+</div>
 
-  <button onclick="save()">حفظ الإعلان</button>
+<!-- DETAILS -->
+<div id="details">
+  <button onclick="showHome()">⬅ رجوع</button>
+  <div class="post">
+    <img id="dImage" style="display:none">
+    <h2 id="dTitle"></h2>
+    <p id="dDesc"></p>
+    <div id="dCategory"></div>
+    <div class="price" id="dPrice"></div>
+    <div class="actions">
+      <a id="whatsappBtn" class="whatsapp" target="_blank">💬 واتساب</a>
+      <a id="callBtn" class="call">📞 اتصال</a>
+    </div>
+  </div>
 </div>
 
 <script>
 let posts = JSON.parse(localStorage.getItem("posts")) || [];
 let editIndex = null;
 let imageData = "";
+let currentCategory = "all";
 
-document.getElementById("image").addEventListener("change",function(){
-  const file = this.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload=()=> imageData=reader.result;
-  reader.readAsDataURL(file);
+const home=document.getElementById("home");
+const form=document.getElementById("form");
+const details=document.getElementById("details");
+const postsBox=document.getElementById("posts");
+
+const titleInput=document.getElementById("title");
+const descInput=document.getElementById("desc");
+const priceInput=document.getElementById("price");
+const categoryInput=document.getElementById("category");
+const phoneInput=document.getElementById("phone");
+
+image.addEventListener("change",e=>{
+  const reader=new FileReader();
+  reader.onload=()=>imageData=reader.result;
+  reader.readAsDataURL(e.target.files[0]);
 });
+
+function showHome(){
+  home.style.display="block";
+  form.style.display="none";
+  details.style.display="none";
+}
 
 function showForm(){
   home.style.display="none";
   form.style.display="block";
 }
 
-function showHome(){
-  form.style.display="none";
-  home.style.display="block";
-  clearForm();
+function setCategory(c){
+  currentCategory=c;
+  render();
 }
 
 function save(){
-  const title=titleInput.value;
-  const desc=descInput.value;
-  const price=priceInput.value;
-  const category=categoryInput.value;
-
-  if(!title || !price){
-    alert("أدخل العنوان والسعر");
-    return;
-  }
-
-  const post={title,desc,price,category,image:imageData};
-
-  if(editIndex===null){
-    posts.push(post);
-  }else{
-    posts[editIndex]=post;
-    editIndex=null;
-  }
+  const post={
+    title:titleInput.value,
+    desc:descInput.value,
+    price:priceInput.value,
+    category:categoryInput.value,
+    phone:phoneInput.value,
+    image:imageData
+  };
+  if(editIndex===null) posts.push(post);
+  else posts[editIndex]=post, editIndex=null;
 
   localStorage.setItem("posts",JSON.stringify(posts));
-  showHome();
-  render();
+  clearForm(); showHome(); render();
 }
 
 function render(){
   const q=search.value.toLowerCase();
   postsBox.innerHTML="";
-  posts.filter(p=>p.title.toLowerCase().includes(q))
-  .forEach((p,i)=>{
+  posts.filter(p=>
+    (currentCategory==="all"||p.category===currentCategory)&&
+    p.title.toLowerCase().includes(q)
+  ).forEach((p,i)=>{
     postsBox.innerHTML+=`
-    <div class="post">
+    <div class="post" onclick="openDetails(${i})">
       ${p.image?`<img src="${p.image}">`:""}
       <h3>${p.title}</h3>
-      <div>${p.desc||""}</div>
+      <div>${p.category}</div>
       <div class="price">💰 ${p.price}</div>
-      <div class="actions">
-        <button class="delete" onclick="removePost(${i})">حذف</button>
-        <button class="edit" onclick="editPost(${i})">تعديل</button>
-      </div>
     </div>`;
   });
 }
 
-function editPost(i){
+function openDetails(i){
   const p=posts[i];
-  titleInput.value=p.title;
-  descInput.value=p.desc;
-  priceInput.value=p.price;
-  categoryInput.value=p.category;
-  imageData=p.image||"";
-  editIndex=i;
-  showForm();
-}
-
-function removePost(i){
-  if(confirm("حذف الإعلان؟")){
-    posts.splice(i,1);
-    localStorage.setItem("posts",JSON.stringify(posts));
-    render();
-  }
+  dTitle.innerText=p.title;
+  dDesc.innerText=p.desc;
+  dCategory.innerText=p.category;
+  dPrice.innerText="💰 "+p.price;
+  if(p.image){dImage.src=p.image;dImage.style.display="block";}
+  whatsappBtn.href="https://wa.me/"+p.phone;
+  callBtn.href="tel:"+p.phone;
+  home.style.display="none";
+  details.style.display="block";
 }
 
 function clearForm(){
-  titleInput.value="";
-  descInput.value="";
-  priceInput.value="";
-  image.value="";
-  imageData="";
+  titleInput.value=descInput.value=priceInput.value=phoneInput.value="";
+  image.value=""; imageData="";
 }
-
-const home=document.getElementById("home");
-const form=document.getElementById("form");
-const postsBox=document.getElementById("posts");
-const titleInput=document.getElementById("title");
-const descInput=document.getElementById("desc");
-const priceInput=document.getElementById("price");
-const categoryInput=document.getElementById("category");
 
 render();
 </script>
