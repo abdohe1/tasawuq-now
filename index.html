@@ -2,155 +2,230 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تسوّق الآن</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body{margin:0;font-family:Tahoma;background:#f2f4f8}
-header{background:#0d6efd;color:#fff;padding:15px;text-align:center}
-nav button{margin:5px;padding:8px 14px;border:none;border-radius:8px;font-weight:bold}
-.container{max-width:900px;margin:auto;padding:15px}
-.card{background:#fff;border-radius:12px;padding:15px;margin-bottom:15px}
-.hidden{display:none}
-input,select{width:100%;padding:10px;margin:6px 0}
-.actions button{margin:4px}
-</style>
+*{
+  box-sizing:border-box;
+  font-family: "Tajawal", Arial, sans-serif;
+}
 
-<!-- Firebase CDN -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+body{
+  margin:0;
+  background:#f2f4f8;
+  color:#222;
+}
+
+/* ===== Header ===== */
+header{
+  background:linear-gradient(135deg,#0d6efd,#0a58ca);
+  padding:15px;
+  text-align:center;
+  color:#fff;
+}
+
+header h1{
+  margin:0;
+  font-size:24px;
+}
+
+header .nav-btns{
+  margin-top:10px;
+}
+
+header button{
+  background:#fff;
+  border:none;
+  padding:8px 14px;
+  margin:5px;
+  border-radius:12px;
+  font-weight:bold;
+  color:#0d6efd;
+}
+
+/* ===== Search ===== */
+.search-box{
+  padding:15px;
+}
+
+.search-box input{
+  width:100%;
+  padding:12px 15px;
+  border-radius:25px;
+  border:none;
+  font-size:16px;
+}
+
+/* ===== Categories ===== */
+.section-title{
+  padding:10px 15px;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.categories{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  padding:10px 15px;
+}
+
+.category{
+  background:#fff;
+  border-radius:15px;
+  text-align:center;
+  padding:15px 5px;
+  font-size:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+.category span{
+  display:block;
+  margin-top:6px;
+}
+
+/* ===== Ads ===== */
+.ads{
+  padding:10px 15px;
+}
+
+.ad{
+  background:#fff;
+  border-radius:18px;
+  padding:15px;
+  margin-bottom:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.ad h3{
+  margin:0 0 10px;
+}
+
+.price{
+  color:#198754;
+  font-weight:bold;
+  font-size:18px;
+}
+
+.ad .actions{
+  margin-top:15px;
+  display:flex;
+  gap:10px;
+}
+
+.ad button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  color:#fff;
+}
+
+.delete{
+  background:#dc3545;
+}
+
+.edit{
+  background:#198754;
+}
+
+/* ===== Bottom Bar ===== */
+.bottom-bar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  border-top:1px solid #ddd;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+}
+
+.bottom-bar div{
+  text-align:center;
+  font-size:13px;
+}
+
+/* Add Button */
+.add-btn{
+  position:fixed;
+  bottom:55px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#f59e0b;
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:30px;
+  color:#fff;
+  font-weight:bold;
+}
+</style>
 </head>
 
 <body>
 
 <header>
-<h2>🛒 تسوّق الآن</h2>
-<nav>
-<button onclick="show('home')">الرئيسية</button>
-<button onclick="show('add')">إضافة إعلان</button>
-<button onclick="show('dashboard')">لوحة التحكم</button>
-<button onclick="logout()">خروج</button>
-</nav>
+  <h1>🛒 تسوّق الآن</h1>
+  <div class="nav-btns">
+    <button>الرئيسية</button>
+    <button>إضافة إعلان</button>
+  </div>
 </header>
 
-<div class="container">
-
-<!-- AUTH -->
-<div id="auth" class="card">
-<h3>تسجيل / دخول</h3>
-<input id="email" placeholder="البريد">
-<input id="password" type="password" placeholder="كلمة المرور">
-<button onclick="register()">تسجيل</button>
-<button onclick="login()">دخول</button>
+<div class="search-box">
+  <input type="text" placeholder="🔍 ابحث عن إعلان...">
 </div>
 
-<!-- SEARCH -->
-<input id="search" placeholder="🔍 بحث" oninput="loadPosts()">
+<div class="section-title">الأقسام</div>
 
-<!-- HOME -->
-<div id="home"></div>
-
-<!-- ADD -->
-<div id="add" class="card hidden">
-<h3>إضافة إعلان</h3>
-<input id="title" placeholder="العنوان">
-<select id="category">
-<option>سيارات</option>
-<option>دراجات</option>
-<option>ألعاب</option>
-</select>
-<input id="price" placeholder="السعر">
-<button onclick="addPost()">حفظ</button>
+<div class="categories">
+  <div class="category">🚗<span>سيارات</span></div>
+  <div class="category">🏍️<span>دراجات</span></div>
+  <div class="category">🎮<span>ألعاب</span></div>
+  <div class="category">🏠<span>عقارات</span></div>
+  <div class="category">🛋️<span>منزل</span></div>
+  <div class="category">💼<span>وظائف</span></div>
+  <div class="category">🛠️<span>خدمات</span></div>
+  <div class="category">🏪<span>متاجر</span></div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="hidden"></div>
+<div class="section-title">الإعلانات</div>
 
+<div class="ads">
+  <div class="ad">
+    <h3>سيارة للبيع</h3>
+    <div class="price">💰 1000</div>
+    <div class="actions">
+      <button class="delete">حذف</button>
+      <button class="edit">تعديل</button>
+    </div>
+  </div>
+
+  <div class="ad">
+    <h3>لابتوب</h3>
+    <div class="price">💰 50000</div>
+    <div class="actions">
+      <button class="delete">حذف</button>
+      <button class="edit">تعديل</button>
+    </div>
+  </div>
 </div>
 
-<script>
-/* 🔴 ضع بيانات Firebase الخاصة بك هنا */
-const firebaseConfig = {
-  apiKey: "PUT_YOUR_KEY",
-  authDomain: "PROJECT.firebaseapp.com",
-  projectId: "PROJECT",
-};
-/* 🔴 انتهى */
+<div class="add-btn">＋</div>
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-let currentUser = null;
-
-auth.onAuthStateChanged(user=>{
-  if(user){
-    currentUser=user;
-    document.getElementById("auth").style.display="none";
-    loadPosts();
-    loadMyPosts();
-  }else{
-    document.getElementById("auth").style.display="block";
-  }
-});
-
-function register(){
-  auth.createUserWithEmailAndPassword(email.value,password.value);
-}
-function login(){
-  auth.signInWithEmailAndPassword(email.value,password.value);
-}
-function logout(){
-  auth.signOut();
-}
-
-function show(id){
-  document.querySelectorAll(".container > div").forEach(d=>d.classList.add("hidden"));
-  document.getElementById(id)?.classList.remove("hidden");
-}
-
-function addPost(){
-  db.collection("posts").add({
-    title:title.value,
-    category:category.value,
-    price:price.value,
-    uid:currentUser.uid
-  });
-}
-
-function loadPosts(){
-  home.innerHTML="";
-  const q = search.value.toLowerCase();
-  db.collection("posts").onSnapshot(s=>{
-    s.forEach(d=>{
-      const p=d.data();
-      if(p.title.toLowerCase().includes(q)){
-        home.innerHTML+=`
-        <div class="card">
-        <b>${p.title}</b><br>
-        ${p.category} – 💰 ${p.price}
-        </div>`;
-      }
-    });
-  });
-}
-
-function loadMyPosts(){
-  dashboard.innerHTML="<h3>إعلاناتي</h3>";
-  db.collection("posts").where("uid","==",currentUser.uid)
-  .onSnapshot(s=>{
-    s.forEach(d=>{
-      const p=d.data();
-      dashboard.innerHTML+=`
-      <div class="card">
-      ${p.title}
-      <button onclick="db.collection('posts').doc('${d.id}').delete()">حذف</button>
-      </div>`;
-    });
-  });
-}
-</script>
+<div class="bottom-bar">
+  <div>الرئيسية</div>
+  <div>دردشاتي</div>
+  <div>إعلاناتي</div>
+  <div>حسابي</div>
+</div>
 
 </body>
 </html>
