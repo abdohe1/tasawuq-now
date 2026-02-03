@@ -133,7 +133,18 @@
     <button onclick="showForm()">إضافة إعلان</button>
   </nav>
 </header>
-
+<input 
+  id="search"
+  placeholder="🔍 ابحث عن إعلان..."
+  oninput="render()"
+  style="
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:12px;
+    border:1px solid #ccc;
+  "
+>
 <div class="container">
 
   <!-- الصفحة الرئيسية -->
@@ -160,10 +171,17 @@
 
   const home = document.getElementById("home");
 
-  function render() {
-    home.innerHTML = "";
+  <script>
+function render() {
+  const q = document.getElementById("search")?.value?.toLowerCase() || "";
+  home.innerHTML = "";
 
-    posts.forEach((p, i) => {
+  posts
+    .filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      p.desc.toLowerCase().includes(q)
+    )
+    .forEach((p, i) => {
       home.innerHTML += `
         <div class="card">
           ${p.image ? `<img src="${p.image}">` : ""}
@@ -179,8 +197,9 @@
       `;
     });
 
-    localStorage.setItem("posts", JSON.stringify(posts));
-  }
+  localStorage.setItem("posts", JSON.stringify(posts));
+}
+</script>
 
   document.getElementById("image").addEventListener("change", function () {
     const file = this.files[0];
