@@ -297,6 +297,18 @@ const descInput = document.getElementById("desc");
 const priceInput = document.getElementById("price");
 
 render();
+<div id="form" style="display:none" class="container">
+  <h2 id="formTitle">إضافة إعلان</h2>
+
+  <input id="title" placeholder="عنوان الإعلان">
+  <textarea id="desc" placeholder="وصف الإعلان"></textarea>
+  <input id="price" type="number" placeholder="السعر">
+  <input id="image" type="file">
+  <img id="preview" style="max-width:100%; margin-top:10px">
+
+  <button onclick="save()">حفظ</button>
+  <button onclick="showHome()">إلغاء</button>
+</div>
 </script>
 
 </body>
