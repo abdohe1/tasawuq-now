@@ -62,7 +62,7 @@ header button{
 .edit{background:#198754}
 .delete{background:#dc3545}
 
-/* FORM / AUTH */
+/* SECTIONS */
 .section{display:none;padding:15px}
 input,select{
   width:100%;padding:12px;margin-bottom:10px;
@@ -82,12 +82,12 @@ input,select{
   <h1>🛒 تسوق الآن</h1>
   <button onclick="showHome()">الرئيسية</button>
   <button onclick="showForm()">إضافة إعلان</button>
+  <button onclick="showMyAds()">إعلاناتي</button>
   <button onclick="openAccount()">حسابي</button>
 </header>
 
-<!-- ===== HOME ===== -->
+<!-- HOME -->
 <div id="home">
-
   <div class="search-box">
     <input placeholder="ابحث عن إعلان..." oninput="search(this.value)">
   </div>
@@ -104,7 +104,7 @@ input,select{
   <div class="posts" id="posts"></div>
 </div>
 
-<!-- ===== ADD FORM ===== -->
+<!-- ADD FORM -->
 <div id="form" class="section">
   <input id="title" placeholder="عنوان الإعلان">
   <input id="price" type="number" placeholder="السعر">
@@ -118,7 +118,7 @@ input,select{
   <button class="main-btn" onclick="save()">حفظ الإعلان</button>
 </div>
 
-<!-- ===== LOGIN ===== -->
+<!-- LOGIN -->
 <div id="login" class="section">
   <h3>تسجيل الدخول</h3>
   <input id="loginEmail" placeholder="البريد الإلكتروني">
@@ -129,7 +129,7 @@ input,select{
   </p>
 </div>
 
-<!-- ===== REGISTER ===== -->
+<!-- REGISTER -->
 <div id="register" class="section">
   <h3>إنشاء حساب</h3>
   <input id="regName" placeholder="الاسم">
@@ -138,7 +138,7 @@ input,select{
   <button class="main-btn" onclick="register()">تسجيل</button>
 </div>
 
-<!-- ===== ACCOUNT ===== -->
+<!-- ACCOUNT -->
 <div id="account" class="section">
   <h3>👤 حسابي</h3>
   <p id="userInfo"></p>
@@ -151,31 +151,29 @@ let editIndex=null;
 let currentCat="الكل";
 let user = JSON.parse(localStorage.getItem("user"));
 
+const postsBox=document.getElementById("posts");
+
+/* ===== NAV ===== */
 function hideAll(){
   home.style.display=form.style.display=
   login.style.display=register.style.display=
   account.style.display="none";
 }
-
 function showHome(){hideAll();home.style.display="block";render()}
 function showForm(){hideAll();form.style.display="block"}
-function openAccount(){
-  hideAll();
-  user ? showAccount() : login.style.display="block";
-}
-
+function openAccount(){hideAll();user?showAccount():login.style.display="block"}
 function showRegister(){hideAll();register.style.display="block"}
 function showAccount(){
   account.style.display="block";
   userInfo.innerText="مرحبًا "+user.name;
 }
 
+/* ===== AUTH ===== */
 function register(){
   user={name:regName.value,email:regEmail.value,pass:regPass.value};
   localStorage.setItem("user",JSON.stringify(user));
   showAccount();
 }
-
 function login(){
   const u=JSON.parse(localStorage.getItem("user"));
   if(!u||u.email!==loginEmail.value||u.pass!==loginPass.value){
@@ -183,35 +181,41 @@ function login(){
   }
   user=u;showAccount();
 }
-
 function logout(){
   user=null;localStorage.removeItem("user");showHome();
 }
 
 /* ===== POSTS ===== */
 function save(){
+  if(!user){alert("سجل دخولك أولاً");return;}
   if(!title.value||!price.value)return alert("أدخل البيانات");
-  const p={title:title.value,price:price.value,category:category.value};
+  const p={title:title.value,price:price.value,category:category.value,owner:user.email};
   editIndex===null?posts.push(p):posts[editIndex]=p;
-  editIndex=null;localStorage.setItem("posts",JSON.stringify(posts));
-  title.value=price.value="";showHome();
+  editIndex=null;
+  localStorage.setItem("posts",JSON.stringify(posts));
+  title.value=price.value="";
+  showHome();
 }
-
 function render(){
   postsBox.innerHTML="";
   posts.forEach((p,i)=>{
     if(currentCat!=="الكل"&&p.category!==currentCat)return;
+    let actions="";
+    if(user&&p.owner===user.email){
+      actions=`
+        <button class="edit" onclick="edit(${i})">تعديل</button>
+        <button class="delete" onclick="removePost(${i})">حذف</button>
+      `;
+    }
     postsBox.innerHTML+=`
-    <div class="post">
-      <h3>${p.title}</h3>
-      <div>${p.category}</div>
-      <div class="price">${p.price} 💰</div>
-      <button class="edit" onclick="edit(${i})">تعديل</button>
-      <button class="delete" onclick="removePost(${i})">حذف</button>
-    </div>`;
+      <div class="post">
+        <h3>${p.title}</h3>
+        <div>${p.category}</div>
+        <div class="price">${p.price} 💰</div>
+        ${actions}
+      </div>`;
   });
 }
-
 function edit(i){
   const p=posts[i];
   title.value=p.title;price.value=p.price;category.value=p.category;
@@ -224,19 +228,34 @@ function removePost(i){
     render();
   }
 }
+function showMyAds(){
+  if(!user){alert("سجل دخولك أولاً");return;}
+  hideAll();home.style.display="block";
+  postsBox.innerHTML="";
+  posts.forEach((p,i)=>{
+    if(p.owner===user.email){
+      postsBox.innerHTML+=`
+        <div class="post">
+          <h3>${p.title}</h3>
+          <div class="price">${p.price} 💰</div>
+          <button class="edit" onclick="edit(${i})">تعديل</button>
+          <button class="delete" onclick="removePost(${i})">حذف</button>
+        </div>`;
+    }
+  });
+}
 function filterCat(c){currentCat=c;render()}
 function search(t){
   postsBox.innerHTML="";
   posts.filter(p=>p.title.includes(t)).forEach(p=>{
     postsBox.innerHTML+=`
-    <div class="post">
-      <h3>${p.title}</h3>
-      <div class="price">${p.price} 💰</div>
-    </div>`;
+      <div class="post">
+        <h3>${p.title}</h3>
+        <div class="price">${p.price} 💰</div>
+      </div>`;
   });
 }
 
-const postsBox=document.getElementById("posts");
 showHome();
 </script>
 
