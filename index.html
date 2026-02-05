@@ -30,6 +30,18 @@ header button{
   cursor:pointer;
 }
 
+/* COMMON */
+.section{display:none;padding:15px}
+input,select{
+  width:100%;padding:12px;margin-bottom:10px;
+  border-radius:10px;border:1px solid #ccc;font-size:16px
+}
+.main-btn{
+  width:100%;padding:12px;border:none;
+  border-radius:12px;background:#0d6efd;
+  color:white;font-size:18px
+}
+
 /* SEARCH */
 .search-box{margin:15px}
 .search-box input{
@@ -63,35 +75,15 @@ header button{
 .delete{background:#dc3545}
 .chat{background:#0d6efd}
 
-/* SECTIONS */
-.section{display:none;padding:15px}
-input,select{
-  width:100%;padding:12px;margin-bottom:10px;
-  border-radius:10px;border:1px solid #ccc;font-size:16px
-}
-.main-btn{
-  width:100%;padding:12px;border:none;
-  border-radius:12px;background:#0d6efd;
-  color:white;font-size:18px
-}
-
-/* CHAT */
-.chat-box{
+/* ADMIN */
+.admin-card{
   background:white;
-  height:300px;
-  border-radius:12px;
-  padding:10px;
-  overflow-y:auto;
+  padding:15px;
+  border-radius:14px;
   margin-bottom:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08)
 }
-.msg{
-  padding:8px 12px;
-  margin:6px 0;
-  border-radius:12px;
-  max-width:75%;
-}
-.me{background:#0d6efd;color:white;margin-left:auto}
-.other{background:#eee}
+.admin-card small{color:#777}
 </style>
 </head>
 
@@ -103,6 +95,7 @@ input,select{
   <button onclick="showForm()">إضافة إعلان</button>
   <button onclick="showMyAds()">إعلاناتي</button>
   <button onclick="openAccount()">حسابي</button>
+  <button id="adminBtn" onclick="showAdmin()" style="display:none">لوحة التحكم</button>
 </header>
 
 <!-- HOME -->
@@ -143,9 +136,7 @@ input,select{
   <input id="loginEmail" placeholder="البريد الإلكتروني">
   <input id="loginPass" type="password" placeholder="كلمة المرور">
   <button class="main-btn" onclick="login()">دخول</button>
-  <p onclick="showRegister()" style="text-align:center;cursor:pointer">
-    إنشاء حساب جديد
-  </p>
+  <p onclick="showRegister()" style="text-align:center;cursor:pointer">إنشاء حساب جديد</p>
 </div>
 
 <!-- REGISTER -->
@@ -164,31 +155,36 @@ input,select{
   <button class="main-btn" onclick="logout()">تسجيل خروج</button>
 </div>
 
-<!-- CHAT -->
-<div id="chat" class="section">
-  <h3 id="chatTitle"></h3>
-  <div class="chat-box" id="chatBox"></div>
-  <input id="chatInput" placeholder="اكتب رسالة">
-  <button class="main-btn" onclick="sendMsg()">إرسال</button>
+<!-- ADMIN -->
+<div id="admin" class="section">
+  <h3>🛠️ لوحة تحكم الأدمن</h3>
+  <div id="adminPosts"></div>
 </div>
 
 <script>
-let posts=JSON.parse(localStorage.getItem("posts")||"[]");
-let chats=JSON.parse(localStorage.getItem("chats")||"{}");
-let editIndex=null,currentCat="الكل",user=JSON.parse(localStorage.getItem("user"));
-let currentChat=null;
+const ADMIN_EMAIL = "admin@tasawuq.com";
+
+let posts = JSON.parse(localStorage.getItem("posts")||"[]");
+let user = JSON.parse(localStorage.getItem("user"));
+let editIndex=null,currentCat="الكل";
+
 const postsBox=document.getElementById("posts");
+const adminBtn=document.getElementById("adminBtn");
 
 /* NAV */
 function hideAll(){
   home.style.display=form.style.display=login.style.display=
-  register.style.display=account.style.display=chat.style.display="none";
+  register.style.display=account.style.display=admin.style.display="none";
 }
 function showHome(){hideAll();home.style.display="block";render()}
 function showForm(){hideAll();form.style.display="block"}
 function openAccount(){hideAll();user?showAccount():login.style.display="block"}
 function showRegister(){hideAll();register.style.display="block"}
-function showAccount(){account.style.display="block";userInfo.innerText="مرحبًا "+user.name}
+function showAccount(){
+  account.style.display="block";
+  userInfo.innerText="مرحبًا "+user.name;
+  adminBtn.style.display=(user.email===ADMIN_EMAIL)?"inline-block":"none";
+}
 
 /* AUTH */
 function register(){
@@ -198,24 +194,31 @@ function register(){
 }
 function login(){
   const u=JSON.parse(localStorage.getItem("user"));
-  if(!u||u.email!==loginEmail.value||u.pass!==loginPass.value){alert("خطأ");return;}
+  if(!u||u.email!==loginEmail.value||u.pass!==loginPass.value){alert("بيانات خاطئة");return;}
   user=u;showAccount();
 }
-function logout(){user=null;localStorage.removeItem("user");showHome()}
+function logout(){
+  user=null;
+  localStorage.removeItem("user");
+  adminBtn.style.display="none";
+  showHome();
+}
 
 /* POSTS */
 function save(){
   if(!user){alert("سجل دخولك");return;}
-  const p={title:title.value,price:price.value,category:category.value,owner:user.email,id:Date.now()};
+  const p={title:title.value,price:price.value,category:category.value,owner:user.email};
   editIndex===null?posts.push(p):posts[editIndex]=p;
-  editIndex=null;localStorage.setItem("posts",JSON.stringify(posts));
-  title.value=price.value="";showHome();
+  editIndex=null;
+  localStorage.setItem("posts",JSON.stringify(posts));
+  title.value=price.value="";
+  showHome();
 }
 function render(){
   postsBox.innerHTML="";
   posts.forEach((p,i)=>{
     if(currentCat!=="الكل"&&p.category!==currentCat)return;
-    let btns=`<button class="chat" onclick="openChat(${p.id},'${p.title}')">💬 دردشة</button>`;
+    let btns=`<button class="chat">💬</button>`;
     if(user&&p.owner===user.email){
       btns+=`<button class="edit" onclick="edit(${i})">تعديل</button>
              <button class="delete" onclick="removePost(${i})">حذف</button>`;
@@ -223,15 +226,24 @@ function render(){
     postsBox.innerHTML+=`
       <div class="post">
         <h3>${p.title}</h3>
+        <small>📧 ${p.owner}</small>
         <div>${p.category}</div>
         <div class="price">${p.price} 💰</div>
         ${btns}
       </div>`;
   });
 }
-function edit(i){const p=posts[i];title.value=p.title;price.value=p.price;category.value=p.category;editIndex=i;showForm()}
+function edit(i){
+  const p=posts[i];
+  title.value=p.title;price.value=p.price;category.value=p.category;
+  editIndex=i;showForm();
+}
 function removePost(i){
-  if(confirm("حذف؟")){posts.splice(i,1);localStorage.setItem("posts",JSON.stringify(posts));render()}
+  if(confirm("حذف الإعلان؟")){
+    posts.splice(i,1);
+    localStorage.setItem("posts",JSON.stringify(posts));
+    render();renderAdmin();
+  }
 }
 function showMyAds(){
   if(!user){alert("سجل دخولك");return;}
@@ -261,27 +273,23 @@ function search(t){
   });
 }
 
-/* CHAT */
-function openChat(id,title){
-  if(!user){alert("سجل دخولك");return;}
-  currentChat=id;
-  chatTitle.innerText="دردشة: "+title;
-  renderChat();
-  hideAll();chat.style.display="block";
+/* ADMIN */
+function showAdmin(){
+  if(!user||user.email!==ADMIN_EMAIL){alert("غير مصرح");return;}
+  hideAll();admin.style.display="block";
+  renderAdmin();
 }
-function renderChat(){
-  chatBox.innerHTML="";
-  (chats[currentChat]||[]).forEach(m=>{
-    chatBox.innerHTML+=`<div class="msg ${m.me?'me':'other'}">${m.text}</div>`;
+function renderAdmin(){
+  adminPosts.innerHTML="";
+  posts.forEach((p,i)=>{
+    adminPosts.innerHTML+=`
+      <div class="admin-card">
+        <b>${p.title}</b><br>
+        <small>المالك: ${p.owner}</small><br>
+        <div class="price">${p.price} 💰</div>
+        <button class="delete" onclick="removePost(${i})">حذف الإعلان</button>
+      </div>`;
   });
-}
-function sendMsg(){
-  if(!chatInput.value)return;
-  chats[currentChat]=chats[currentChat]||[];
-  chats[currentChat].push({text:chatInput.value,me:true});
-  localStorage.setItem("chats",JSON.stringify(chats));
-  chatInput.value="";
-  renderChat();
 }
 
 showHome();
