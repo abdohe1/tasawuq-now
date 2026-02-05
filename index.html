@@ -1,160 +1,143 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Abdo Store | متجر Abdo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسوق الآن</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:Tajawal,Arial}
+body{margin:0;background:#f2f4f8;color:#222}
 
-  <style>
-    :root {
-      --blue: #1e90ff;
-      --red: #e10600;
-      --black: #0f0f0f;
-      --gray: #1a1a1a;
-      --text: #ffffff;
-    }
+/* HEADER */
+header{
+  background:#0d6efd;
+  color:#fff;
+  padding:20px;
+  text-align:center;
+  border-bottom-left-radius:24px;
+  border-bottom-right-radius:24px;
+}
+header h1{margin:0;font-size:24px}
+nav{margin-top:10px}
+nav button{
+  background:#fff;
+  color:#0d6efd;
+  border:none;
+  padding:10px 16px;
+  margin:4px;
+  border-radius:14px;
+  font-weight:bold;
+}
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+/* SEARCH */
+.search{padding:15px}
+.search input{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:16px;
+  font-size:16px;
+  box-shadow:0 6px 15px rgba(0,0,0,.08);
+}
 
-    body {
-      font-family: 'Cairo', 'Inter', sans-serif;
-      background: var(--black);
-      color: var(--text);
-      line-height: 1.6;
-    }
+/* CATEGORIES */
+.categories{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  padding:0 15px;
+}
+.cat{
+  background:#fff;
+  padding:16px 8px;
+  text-align:center;
+  border-radius:18px;
+  font-weight:bold;
+  box-shadow:0 6px 15px rgba(0,0,0,.08);
+  cursor:pointer;
+}
 
-    header {
-      background: #000;
-      padding: 15px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h1 {
-      color: var(--blue);
-      font-size: 24px;
-    }
-
-    .lang-btn {
-      background: none;
-      border: 1px solid var(--blue);
-      color: var(--blue);
-      padding: 6px 12px;
-      cursor: pointer;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 100px 20px;
-      background: linear-gradient(180deg, #000, #111);
-    }
-
-    .hero h2 {
-      font-size: 42px;
-      margin-bottom: 15px;
-    }
-
-    .hero p {
-      color: #ccc;
-      margin-bottom: 30px;
-    }
-
-    .cta {
-      background: var(--red);
-      color: #fff;
-      padding: 14px 40px;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
-      gap: 20px;
-      padding: 60px 40px;
-      background: var(--gray);
-      text-align: center;
-    }
-
-    .feature {
-      background: #000;
-      padding: 30px;
-      border-radius: 6px;
-    }
-
-    .feature h3 {
-      color: var(--blue);
-      margin-bottom: 10px;
-    }
-
-    footer {
-      background: #000;
-      text-align: center;
-      padding: 20px;
-      color: #777;
-    }
-  </style>
+/* POSTS */
+.container{padding:15px}
+.post{
+  background:#fff;
+  border-radius:20px;
+  padding:15px;
+  margin-bottom:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+.post h3{margin:6px 0;font-size:18px}
+.price{color:#198754;font-weight:bold;font-size:18px}
+.meta{font-size:13px;color:#777}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1 id="logo">Abdo Store</h1>
-  <button class="lang-btn" onclick="toggleLang()">EN</button>
+  <h1>🛒 تسوق الآن</h1>
+  <nav>
+    <button>الرئيسية</button>
+    <button disabled>إضافة إعلان</button>
+    <button disabled>حسابي</button>
+  </nav>
 </header>
 
-<section class="hero">
-  <h2 id="title">متجر Abdo</h2>
-  <p id="subtitle">أفضل المنتجات بأفضل سعر</p>
-  <button class="cta" id="cta">تسوّق الآن</button>
-</section>
+<div class="search">
+  <input id="search" placeholder="🔍 ابحث عن إعلان..." oninput="render()">
+</div>
 
-<section class="features">
-  <div class="feature">
-    <h3 id="f1">توصيل سريع</h3>
-    <p>نوصل طلبك بأسرع وقت</p>
-  </div>
-  <div class="feature">
-    <h3 id="f2">دفع آمن</h3>
-    <p>وسائل دفع موثوقة</p>
-  </div>
-  <div class="feature">
-    <h3 id="f3">جودة مضمونة</h3>
-    <p>منتجات مختارة بعناية</p>
-  </div>
-</section>
+<div class="categories">
+  <div class="cat" onclick="setCategory('all')">📦 الكل</div>
+  <div class="cat" onclick="setCategory('سيارات')">🚗 سيارات</div>
+  <div class="cat" onclick="setCategory('دراجات')">🏍️ دراجات</div>
+  <div class="cat" onclick="setCategory('ألعاب')">🎮 ألعاب</div>
+  <div class="cat" onclick="setCategory('عقارات')">🏠 عقارات</div>
+  <div class="cat" onclick="setCategory('وظائف')">💼 وظائف</div>
+</div>
 
-<footer>
-  © 2026 Abdo Store
-</footer>
+<div class="container" id="posts"></div>
 
 <script>
-  let isArabic = true;
+/* بيانات تجريبية – تُستبدل لاحقًا بـ Firebase */
+let posts = [
+  {title:"سيارة للبيع", price:"10000", category:"سيارات", city:"الرياض"},
+  {title:"دراجة نارية", price:"3500", category:"دراجات", city:"جدة"},
+  {title:"بلايستيشن 5", price:"2200", category:"ألعاب", city:"الدمام"},
+  {title:"شقة للإيجار", price:"1800", category:"عقارات", city:"مكة"},
+  {title:"وظيفة محاسب", price:"—", category:"وظائف", city:"المدينة"}
+];
 
-  function toggleLang() {
-    isArabic = !isArabic;
-    document.documentElement.lang = isArabic ? "ar" : "en";
-    document.documentElement.dir = isArabic ? "rtl" : "ltr";
+let currentCategory = "all";
 
-    document.getElementById("title").innerText = isArabic ? "متجر Abdo" : "Abdo Store";
-    document.getElementById("subtitle").innerText = isArabic ? "أفضل المنتجات بأفضل سعر" : "Best Products at the Best Prices";
-    document.getElementById("cta").innerText = isArabic ? "تسوّق الآن" : "Shop Now";
-    document.getElementById("f1").innerText = isArabic ? "توصيل سريع" : "Fast Delivery";
-    document.getElementById("f2").innerText = isArabic ? "دفع آمن" : "Secure Payment";
-    document.getElementById("f3").innerText = isArabic ? "جودة مضمونة" : "Guaranteed Quality";
+function setCategory(cat){
+  currentCategory = cat;
+  render();
+}
 
-    document.querySelector(".lang-btn").innerText = isArabic ? "EN" : "AR";
-  }
+function render(){
+  const q = search.value.toLowerCase();
+  postsBox.innerHTML = "";
+
+  posts
+    .filter(p =>
+      (currentCategory === "all" || p.category === currentCategory) &&
+      p.title.toLowerCase().includes(q)
+    )
+    .forEach(p=>{
+      postsBox.innerHTML += `
+        <div class="post">
+          <h3>${p.title}</h3>
+          <div class="meta">📂 ${p.category} · 📍 ${p.city}</div>
+          <div class="price">💰 ${p.price}</div>
+        </div>
+      `;
+    });
+}
+
+const postsBox = document.getElementById("posts");
+render();
 </script>
 
 </body>
