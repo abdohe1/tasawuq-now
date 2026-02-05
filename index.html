@@ -1,170 +1,233 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>تسوق الآن</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>تسوق الآن</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-*{box-sizing:border-box;font-family:Tahoma,Arial}
-body{margin:0;background:#f2f4f8}
-header{
-  background:linear-gradient(135deg,#0d6efd,#0aa2c0);
-  padding:25px;text-align:center;color:#fff;
-  border-bottom-left-radius:25px;
-  border-bottom-right-radius:25px;
-}
-header h1{margin:0 0 15px}
-header button{
-  background:#fff;color:#0d6efd;border:none;
-  padding:10px 16px;margin:5px;border-radius:12px;
-  font-weight:bold;cursor:pointer
-}
-.container{padding:15px}
-.card{
-  background:#fff;padding:15px;border-radius:16px;
-  margin-bottom:15px;box-shadow:0 3px 10px rgba(0,0,0,.08)
-}
-input,select{
-  width:100%;padding:12px;margin-bottom:10px;
-  border-radius:10px;border:1px solid #ccc
-}
-button.main{
-  width:100%;background:#0d6efd;color:#fff;
-  padding:12px;border:none;border-radius:12px;font-size:18px
-}
-.hidden{display:none}
-.cat-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:10px
-}
-.cat{background:#fff;padding:12px;border-radius:12px;text-align:center;cursor:pointer}
-.price{color:green;font-weight:bold}
-</style>
+  <style>
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial;
+      background: #f2f4f8;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0d6efd, #0aa2c0);
+      color: white;
+      padding: 25px;
+      text-align: center;
+      border-bottom-left-radius: 25px;
+      border-bottom-right-radius: 25px;
+    }
+
+    header button {
+      background: white;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .box {
+      background: white;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.08);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button.main {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      color: white;
+      background: #0d6efd;
+      cursor: pointer;
+    }
+
+    .post {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+
+    .price {
+      color: green;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-  <h1>🛒 تسوق الآن</h1>
+  <h2>🛒 تسوق الآن</h2>
   <button onclick="showHome()">الرئيسية</button>
-  <button onclick="showAdd()">إضافة إعلان</button>
-  <button onclick="showAuth()" id="btnAccount">حسابي</button>
-  <button onclick="logout()" id="btnLogout" class="hidden">خروج</button>
+  <button onclick="showForm()">إضافة إعلان</button>
+  <button onclick="logout()">خروج</button>
 </header>
 
-<!-- AUTH -->
-<div class="container hidden" id="auth">
-  <div class="card">
-    <h3>تسجيل الدخول / إنشاء حساب</h3>
-    <input id="email" placeholder="البريد الإلكتروني">
-    <input id="password" type="password" placeholder="كلمة المرور">
-    <button class="main" onclick="login()">دخول</button>
-    <button class="main" style="margin-top:10px;background:#198754" onclick="register()">إنشاء حساب</button>
-  </div>
+<!-- تسجيل الدخول -->
+<div class="box" id="authBox">
+  <h3>تسجيل الدخول / إنشاء حساب</h3>
+  <input id="email" placeholder="البريد الإلكتروني">
+  <input id="password" type="password" placeholder="كلمة المرور">
+  <button class="main" onclick="login()">دخول</button>
+  <br><br>
+  <button class="main" style="background:#198754" onclick="register()">إنشاء حساب</button>
 </div>
 
-<!-- HOME -->
-<div class="container hidden" id="home">
-  <div class="cat-grid">
-    <div class="cat" onclick="filter('الكل')">📦 الكل</div>
-    <div class="cat" onclick="filter('سيارات')">🚗 سيارات</div>
-    <div class="cat" onclick="filter('دراجات')">🏍️ دراجات</div>
-    <div class="cat" onclick="filter('العاب')">🎮 العاب</div>
-    <div class="cat" onclick="filter('عقارات')">🏠 عقارات</div>
-    <div class="cat" onclick="filter('وظائف')">💼 وظائف</div>
-  </div>
+<!-- الصفحة الرئيسية -->
+<div class="box hidden" id="home">
+  <h3>الإعلانات</h3>
   <div id="posts"></div>
 </div>
 
-<!-- ADD -->
-<div class="container hidden" id="add">
-  <div class="card">
-    <input id="title" placeholder="عنوان الإعلان">
-    <input id="price" type="number" placeholder="السعر">
-    <select id="category">
-      <option>سيارات</option>
-      <option>دراجات</option>
-      <option>العاب</option>
-      <option>عقارات</option>
-      <option>وظائف</option>
-    </select>
-    <button class="main" onclick="savePost()">حفظ</button>
-  </div>
+<!-- إضافة إعلان -->
+<div class="box hidden" id="form">
+  <h3>إضافة إعلان</h3>
+  <input id="title" placeholder="عنوان الإعلان">
+  <input id="price" type="number" placeholder="السعر">
+  <select id="category">
+    <option>سيارات</option>
+    <option>دراجات</option>
+    <option>العاب</option>
+    <option>عقارات</option>
+    <option>وظائف</option>
+  </select>
+  <button class="main" onclick="savePost()">حفظ الإعلان</button>
 </div>
 
+<!-- Firebase -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut }
-from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+  import { 
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "ضع_apiKey",
-  authDomain: "tasawuq-now-eb955.firebaseapp.com",
-  projectId: "tasawuq-now-eb955"
-};
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    onSnapshot
+  } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+  // 🔥 إعدادات Firebase الخاصة بك
+  const firebaseConfig = {
+    apiKey: "AIzaSyBuhnSrkn6jXcCxUnbL-o14gd5pS9wRmnY",
+    authDomain: "tasawuq-now-eb955.firebaseapp.com",
+    projectId: "tasawuq-now-eb955",
+    storageBucket: "tasawuq-now-eb955.firebasestorage.app",
+    messagingSenderId: "786110830242",
+    appId: "1:786110830242:web:15a4752cd9b5db3f0129fb"
+  };
 
-let posts = JSON.parse(localStorage.getItem("posts")||"[]");
-let currentCat="الكل";
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
+  const db = getFirestore();
 
-const authBox=document.getElementById("auth");
-const home=document.getElementById("home");
-const add=document.getElementById("add");
-const btnAccount=document.getElementById("btnAccount");
-const btnLogout=document.getElementById("btnLogout");
+  // عناصر
+  const authBox = document.getElementById("authBox");
+  const home = document.getElementById("home");
+  const form = document.getElementById("form");
+  const postsBox = document.getElementById("posts");
 
-function showAuth(){hideAll();authBox.classList.remove("hidden")}
-function showHome(){hideAll();home.classList.remove("hidden");render()}
-function showAdd(){hideAll();add.classList.remove("hidden")}
-function hideAll(){authBox.classList.add("hidden");home.classList.add("hidden");add.classList.add("hidden")}
+  // حالة المستخدم
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      authBox.classList.add("hidden");
+      home.classList.remove("hidden");
+      loadPosts();
+    } else {
+      authBox.classList.remove("hidden");
+      home.classList.add("hidden");
+      form.classList.add("hidden");
+    }
+  });
 
-function login(){
-  signInWithEmailAndPassword(auth,email.value,password.value)
-}
-function register(){
-  createUserWithEmailAndPassword(auth,email.value,password.value)
-}
-function logout(){signOut(auth)}
+  // تسجيل
+  window.register = () => {
+    createUserWithEmailAndPassword(
+      auth,
+      email.value,
+      password.value
+    ).catch(e => alert(e.message));
+  };
 
-onAuthStateChanged(auth,user=>{
-  if(user){
-    btnLogout.classList.remove("hidden");
-    btnAccount.classList.add("hidden");
+  // دخول
+  window.login = () => {
+    signInWithEmailAndPassword(
+      auth,
+      email.value,
+      password.value
+    ).catch(e => alert(e.message));
+  };
+
+  // خروج
+  window.logout = () => {
+    signOut(auth);
+  };
+
+  // واجهة
+  window.showHome = () => {
+    home.classList.remove("hidden");
+    form.classList.add("hidden");
+  };
+
+  window.showForm = () => {
+    form.classList.remove("hidden");
+    home.classList.add("hidden");
+  };
+
+  // حفظ إعلان
+  window.savePost = async () => {
+    await addDoc(collection(db, "posts"), {
+      title: title.value,
+      price: price.value,
+      category: category.value
+    });
+    title.value = "";
+    price.value = "";
     showHome();
-  }else{
-    btnLogout.classList.add("hidden");
-    btnAccount.classList.remove("hidden");
-    showAuth();
+  };
+
+  // تحميل الإعلانات
+  function loadPosts() {
+    onSnapshot(collection(db, "posts"), snap => {
+      postsBox.innerHTML = "";
+      snap.forEach(doc => {
+        const p = doc.data();
+        postsBox.innerHTML += `
+          <div class="post">
+            <strong>${p.title}</strong><br>
+            <span>${p.category}</span><br>
+            <span class="price">${p.price} 💰</span>
+          </div>
+        `;
+      });
+    });
   }
-});
-
-function savePost(){
-  posts.push({
-    title:title.value,
-    price:price.value,
-    category:category.value
-  });
-  localStorage.setItem("posts",JSON.stringify(posts));
-  showHome();
-}
-
-function render(){
-  const box=document.getElementById("posts");
-  box.innerHTML="";
-  posts.forEach(p=>{
-    if(currentCat!=="الكل" && p.category!==currentCat)return;
-    box.innerHTML+=`
-      <div class="card">
-        <h3>${p.title}</h3>
-        <div>${p.category}</div>
-        <div class="price">${p.price} 💰</div>
-      </div>`;
-  });
-}
-
-function filter(c){currentCat=c;render()}
 </script>
 
 </body>
