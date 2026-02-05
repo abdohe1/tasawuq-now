@@ -6,15 +6,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{margin:0;font-family:tahoma;background:#f2f4f8}
-header{background:linear-gradient(135deg,#0d6efd,#0aa2c0);padding:20px;text-align:center;color:#fff;border-radius:0 0 25px 25px}
-button{border:none;padding:10px 14px;border-radius:10px;margin:5px;font-weight:bold;cursor:pointer}
-.white{background:#fff;color:#0d6efd}
-#box{padding:15px}
-.card{background:#fff;padding:15px;border-radius:15px;margin-bottom:10px}
-input,select{width:100%;padding:10px;margin-bottom:10px;border-radius:10px;border:1px solid #ccc}
+*{box-sizing:border-box;font-family:tahoma}
+body{margin:0;background:#f2f4f8}
+header{
+background:linear-gradient(135deg,#0d6efd,#0aa2c0);
+padding:20px;text-align:center;color:#fff;
+border-radius:0 0 25px 25px
+}
+header button{
+background:#fff;color:#0d6efd;
+border:none;padding:10px 14px;
+border-radius:12px;margin:5px;
+font-weight:bold;cursor:pointer
+}
+#container{padding:15px}
+.card{
+background:#fff;padding:15px;
+border-radius:16px;margin-bottom:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.08)
+}
+input,select{
+width:100%;padding:12px;margin-bottom:10px;
+border-radius:10px;border:1px solid #ccc
+}
 .green{background:#198754;color:#fff}
 .red{background:#dc3545;color:#fff}
+.hide{display:none}
+.price{color:green;font-weight:bold}
 </style>
 </head>
 
@@ -22,17 +40,17 @@ input,select{width:100%;padding:10px;margin-bottom:10px;border-radius:10px;borde
 
 <header>
 <h2>🛒 تسوق الآن</h2>
-<button class="white" onclick="showHome()">الرئيسية</button>
-<button class="white" onclick="showForm()">إضافة إعلان</button>
-<button class="white" onclick="showMy()">إعلاناتي</button>
-<button class="white" onclick="logout()">خروج</button>
+<button onclick="showHome()">الرئيسية</button>
+<button onclick="showForm()">إضافة إعلان</button>
+<button onclick="showMy()">إعلاناتي</button>
+<button onclick="logout()">خروج</button>
 </header>
 
-<div id="box">
+<div id="container">
 
 <!-- تسجيل دخول -->
-<div id="login" class="card">
-<h3>تسجيل الدخول / حساب جديد</h3>
+<div id="authBox" class="card">
+<h3>تسجيل الدخول / إنشاء حساب</h3>
 <input id="email" placeholder="البريد الإلكتروني">
 <input id="password" type="password" placeholder="كلمة المرور">
 <button class="green" onclick="login()">دخول</button>
@@ -40,7 +58,8 @@ input,select{width:100%;padding:10px;margin-bottom:10px;border-radius:10px;borde
 </div>
 
 <!-- إضافة إعلان -->
-<div id="form" class="card" style="display:none">
+<div id="formBox" class="card hide">
+<h3>إضافة إعلان</h3>
 <input id="title" placeholder="عنوان الإعلان">
 <input id="price" type="number" placeholder="السعر">
 <select id="category">
@@ -50,7 +69,7 @@ input,select{width:100%;padding:10px;margin-bottom:10px;border-radius:10px;borde
 <option>عقارات</option>
 <option>وظائف</option>
 </select>
-<button class="green" onclick="savePost()">حفظ</button>
+<button class="green" onclick="savePost()">حفظ الإعلان</button>
 </div>
 
 <!-- الإعلانات -->
@@ -58,11 +77,27 @@ input,select{width:100%;padding:10px;margin-bottom:10px;border-radius:10px;borde
 
 </div>
 
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+onAuthStateChanged,
+signOut
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+query,
+where
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+/* Firebase Config */
 const firebaseConfig = {
 apiKey: "AIzaSyBuhnSrkn6jXcCxUnbL-o14gd5pS9wRmnY",
 authDomain: "tasawuq-now-eb955.firebaseapp.com",
@@ -75,55 +110,69 @@ appId: "1:786110830242:web:15a4752cd9b5db3f0129fb"
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-let user=null;
 
-onAuthStateChanged(auth,(u)=>{
-user=u;
-document.getElementById("login").style.display=u?"none":"block";
+let currentUser = null;
+
+/* Auth State */
+onAuthStateChanged(auth,(user)=>{
+currentUser = user;
+document.getElementById("authBox").style.display = user ? "none" : "block";
 showHome();
 });
 
-window.login=()=>signInWithEmailAndPassword(auth,email.value,password.value).catch(e=>alert(e.message));
-window.register=()=>createUserWithEmailAndPassword(auth,email.value,password.value).catch(e=>alert(e.message));
-window.logout=()=>signOut(auth);
+/* Auth Functions */
+window.login = () =>
+signInWithEmailAndPassword(auth,email.value,password.value)
+.catch(e=>alert(e.message));
 
-window.showHome=()=>loadPosts();
-window.showMy=()=>loadPosts(true);
-window.showForm=()=>{
-if(!user)return alert("سجل دخولك");
-form.style.display="block";
+window.register = () =>
+createUserWithEmailAndPassword(auth,email.value,password.value)
+.catch(e=>alert(e.message));
+
+window.logout = () => signOut(auth);
+
+/* Navigation */
+window.showHome = ()=>loadPosts(false);
+window.showMy = ()=>loadPosts(true);
+
+window.showForm = ()=>{
+if(!currentUser) return alert("سجل دخولك أولاً");
+formBox.classList.remove("hide");
 posts.innerHTML="";
 };
 
-window.savePost=async()=>{
-if(!user)return;
+/* Save Post */
+window.savePost = async ()=>{
+if(!currentUser) return;
 await addDoc(collection(db,"posts"),{
 title:title.value,
 price:price.value,
 category:category.value,
-uid:user.uid
+uid:currentUser.uid,
+created:Date.now()
 });
 title.value=price.value="";
 showHome();
 };
 
-async function loadPosts(mine=false){
-form.style.display="none";
+/* Load Posts */
+async function loadPosts(onlyMine){
+formBox.classList.add("hide");
 posts.innerHTML="";
-if(!user)return;
+if(!currentUser) return;
 
-let q = mine
-? query(collection(db,"posts"),where("uid","==",user.uid))
+let q = onlyMine
+? query(collection(db,"posts"), where("uid","==",currentUser.uid))
 : query(collection(db,"posts"));
 
-const snap=await getDocs(q);
-snap.forEach(d=>{
-const p=d.data();
-posts.innerHTML+=`
+const snap = await getDocs(q);
+snap.forEach(doc=>{
+const p = doc.data();
+posts.innerHTML += `
 <div class="card">
 <b>${p.title}</b><br>
 ${p.category}<br>
-<span style="color:green">${p.price} 💰</span>
+<span class="price">${p.price} 💰</span>
 </div>`;
 });
 }
