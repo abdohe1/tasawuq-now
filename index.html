@@ -6,70 +6,120 @@
 <title>تسوق الآن</title>
 
 <style>
-*{box-sizing:border-box;font-family:Tajawal,Arial}
-body{margin:0;background:#f2f4f8;color:#222}
-
-/* HEADER */
-header{
-  background:#0d6efd;
-  color:#fff;
-  padding:20px;
-  text-align:center;
-  border-bottom-left-radius:24px;
-  border-bottom-right-radius:24px;
-}
-header h1{margin:0;font-size:24px}
-nav{margin-top:10px}
-nav button{
-  background:#fff;
-  color:#0d6efd;
-  border:none;
-  padding:10px 16px;
-  margin:4px;
-  border-radius:14px;
-  font-weight:bold;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f4f8;
+  color: #222;
 }
 
-/* SEARCH */
-.search{padding:15px}
-.search input{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:16px;
-  font-size:16px;
-  box-shadow:0 6px 15px rgba(0,0,0,.08);
+header {
+  background: linear-gradient(135deg,#0d6efd,#0a58ca);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
 }
 
-/* CATEGORIES */
-.categories{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  padding:0 15px;
-}
-.cat{
-  background:#fff;
-  padding:16px 8px;
-  text-align:center;
-  border-radius:18px;
-  font-weight:bold;
-  box-shadow:0 6px 15px rgba(0,0,0,.08);
-  cursor:pointer;
+header h1 {
+  margin: 0 0 10px;
 }
 
-/* POSTS */
-.container{padding:15px}
-.post{
-  background:#fff;
-  border-radius:20px;
-  padding:15px;
-  margin-bottom:18px;
-  box-shadow:0 8px 20px rgba(0,0,0,.08);
+header button {
+  background: white;
+  border: none;
+  padding: 10px 16px;
+  margin: 5px;
+  border-radius: 12px;
+  font-weight: bold;
+  color: #0d6efd;
 }
-.post h3{margin:6px 0;font-size:18px}
-.price{color:#198754;font-weight:bold;font-size:18px}
-.meta{font-size:13px;color:#777}
+
+.container {
+  padding: 15px;
+}
+
+.search {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.search input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.cat {
+  background: white;
+  padding: 12px;
+  border-radius: 14px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 16px;
+  margin-bottom: 15px;
+}
+
+.price {
+  color: green;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  color: white;
+}
+
+.delete { background: #dc3545; }
+.edit { background: #198754; }
+
+#form {
+  display: none;
+}
+
+form input, form select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: none;
+}
+
+form button {
+  width: 100%;
+  padding: 12px;
+  background: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+}
 </style>
 </head>
 
@@ -77,66 +127,121 @@ nav button{
 
 <header>
   <h1>🛒 تسوق الآن</h1>
-  <nav>
-    <button>الرئيسية</button>
-    <button disabled>إضافة إعلان</button>
-    <button disabled>حسابي</button>
-  </nav>
+  <button onclick="showHome()">الرئيسية</button>
+  <button onclick="showForm()">إضافة إعلان</button>
 </header>
 
-<div class="search">
-  <input id="search" placeholder="🔍 ابحث عن إعلان..." oninput="render()">
+<div class="container">
+
+<div id="home">
+  <div class="search">
+    <input id="search" placeholder="ابحث عن إعلان..." oninput="render()">
+  </div>
+
+  <div class="categories">
+    <div class="cat">🚗 سيارات</div>
+    <div class="cat">🏍 دراجات</div>
+    <div class="cat">🎮 ألعاب</div>
+    <div class="cat">🏠 عقارات</div>
+    <div class="cat">💼 وظائف</div>
+    <div class="cat">📦 الكل</div>
+  </div>
+
+  <div id="posts"></div>
 </div>
 
-<div class="categories">
-  <div class="cat" onclick="setCategory('all')">📦 الكل</div>
-  <div class="cat" onclick="setCategory('سيارات')">🚗 سيارات</div>
-  <div class="cat" onclick="setCategory('دراجات')">🏍️ دراجات</div>
-  <div class="cat" onclick="setCategory('ألعاب')">🎮 ألعاب</div>
-  <div class="cat" onclick="setCategory('عقارات')">🏠 عقارات</div>
-  <div class="cat" onclick="setCategory('وظائف')">💼 وظائف</div>
+<div id="form">
+  <form onsubmit="savePost(event)">
+    <input id="title" placeholder="عنوان الإعلان" required>
+    <input id="price" type="number" placeholder="السعر" required>
+    <select id="category">
+      <option>سيارات</option>
+      <option>دراجات</option>
+      <option>ألعاب</option>
+      <option>عقارات</option>
+      <option>وظائف</option>
+    </select>
+    <button>حفظ الإعلان</button>
+  </form>
 </div>
 
-<div class="container" id="posts"></div>
+</div>
 
 <script>
-/* بيانات تجريبية – تُستبدل لاحقًا بـ Firebase */
-let posts = [
-  {title:"سيارة للبيع", price:"10000", category:"سيارات", city:"الرياض"},
-  {title:"دراجة نارية", price:"3500", category:"دراجات", city:"جدة"},
-  {title:"بلايستيشن 5", price:"2200", category:"ألعاب", city:"الدمام"},
-  {title:"شقة للإيجار", price:"1800", category:"عقارات", city:"مكة"},
-  {title:"وظيفة محاسب", price:"—", category:"وظائف", city:"المدينة"}
-];
+let posts = JSON.parse(localStorage.getItem("posts") || "[]");
+let editIndex = null;
 
-let currentCategory = "all";
+function showForm(){
+  home.style.display="none";
+  form.style.display="block";
+}
 
-function setCategory(cat){
-  currentCategory = cat;
+function showHome(){
+  form.style.display="none";
+  home.style.display="block";
+  clearForm();
+}
+
+function savePost(e){
+  e.preventDefault();
+  const post = {
+    title: title.value,
+    price: price.value,
+    category: category.value
+  };
+
+  if(editIndex === null){
+    posts.push(post);
+  } else {
+    posts[editIndex] = post;
+    editIndex = null;
+  }
+
+  localStorage.setItem("posts", JSON.stringify(posts));
+  showHome();
   render();
 }
 
-function render(){
-  const q = search.value.toLowerCase();
-  postsBox.innerHTML = "";
-
-  posts
-    .filter(p =>
-      (currentCategory === "all" || p.category === currentCategory) &&
-      p.title.toLowerCase().includes(q)
-    )
-    .forEach(p=>{
-      postsBox.innerHTML += `
-        <div class="post">
-          <h3>${p.title}</h3>
-          <div class="meta">📂 ${p.category} · 📍 ${p.city}</div>
-          <div class="price">💰 ${p.price}</div>
-        </div>
-      `;
-    });
+function editPost(i){
+  const p = posts[i];
+  title.value = p.title;
+  price.value = p.price;
+  category.value = p.category;
+  editIndex = i;
+  showForm();
 }
 
-const postsBox = document.getElementById("posts");
+function deletePost(i){
+  if(confirm("حذف الإعلان؟")){
+    posts.splice(i,1);
+    localStorage.setItem("posts", JSON.stringify(posts));
+    render();
+  }
+}
+
+function clearForm(){
+  title.value="";
+  price.value="";
+}
+
+function render(){
+  const q = search.value || "";
+  postsDiv.innerHTML="";
+  posts.filter(p=>p.title.includes(q)).forEach((p,i)=>{
+    postsDiv.innerHTML += `
+      <div class="card">
+        <h3>${p.title}</h3>
+        <div>${p.category}</div>
+        <div class="price">${p.price} 💰</div>
+        <div class="actions">
+          <button class="delete" onclick="deletePost(${i})">حذف</button>
+          <button class="edit" onclick="editPost(${i})">تعديل</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
 render();
 </script>
 
