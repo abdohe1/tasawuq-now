@@ -6,120 +6,59 @@
 <title>تسوق الآن</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f2f4f8;
-  color: #222;
+*{box-sizing:border-box;font-family:Tajawal,Arial}
+body{margin:0;background:#f2f4f8}
+
+header{
+  background:linear-gradient(135deg,#0d6efd,#0aa2c0);
+  padding:25px;
+  text-align:center;
+  color:#fff;
+  border-bottom-left-radius:25px;
+  border-bottom-right-radius:25px;
+}
+header h1{margin:0}
+
+nav button{
+  background:#fff;
+  border:none;
+  padding:10px 16px;
+  border-radius:12px;
+  margin:5px;
+  font-weight:bold;
+  cursor:pointer;
 }
 
-header {
-  background: linear-gradient(135deg,#0d6efd,#0a58ca);
-  color: white;
-  padding: 20px;
-  text-align: center;
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
+.container{padding:20px}
+
+.box{
+  background:#fff;
+  padding:20px;
+  border-radius:18px;
+  margin-bottom:15px;
+  box-shadow:0 10px 20px rgba(0,0,0,.08)
 }
 
-header h1 {
-  margin: 0 0 10px;
+input{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border-radius:12px;
+  border:1px solid #ddd
 }
 
-header button {
-  background: white;
-  border: none;
-  padding: 10px 16px;
-  margin: 5px;
-  border-radius: 12px;
-  font-weight: bold;
-  color: #0d6efd;
+button.main{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#0d6efd;
+  color:#fff;
+  font-size:16px;
+  cursor:pointer;
 }
 
-.container {
-  padding: 15px;
-}
-
-.search {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.search input {
-  flex: 1;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-}
-
-.categories {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.cat {
-  background: white;
-  padding: 12px;
-  border-radius: 14px;
-  text-align: center;
-  font-weight: bold;
-}
-
-.card {
-  background: white;
-  padding: 15px;
-  border-radius: 16px;
-  margin-bottom: 15px;
-}
-
-.price {
-  color: green;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.actions button {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  font-weight: bold;
-  color: white;
-}
-
-.delete { background: #dc3545; }
-.edit { background: #198754; }
-
-#form {
-  display: none;
-}
-
-form input, form select {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  border: none;
-}
-
-form button {
-  width: 100%;
-  padding: 12px;
-  background: #0d6efd;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-}
+.hidden{display:none}
 </style>
 </head>
 
@@ -127,122 +66,117 @@ form button {
 
 <header>
   <h1>🛒 تسوق الآن</h1>
-  <button onclick="showHome()">الرئيسية</button>
-  <button onclick="showForm()">إضافة إعلان</button>
+  <nav>
+    <button onclick="showHome()">الرئيسية</button>
+    <button onclick="showLogin()">حسابي</button>
+  </nav>
 </header>
 
 <div class="container">
 
-<div id="home">
-  <div class="search">
-    <input id="search" placeholder="ابحث عن إعلان..." oninput="render()">
-  </div>
-
-  <div class="categories">
-    <div class="cat">🚗 سيارات</div>
-    <div class="cat">🏍 دراجات</div>
-    <div class="cat">🎮 ألعاب</div>
-    <div class="cat">🏠 عقارات</div>
-    <div class="cat">💼 وظائف</div>
-    <div class="cat">📦 الكل</div>
-  </div>
-
-  <div id="posts"></div>
+<!-- الصفحة الرئيسية -->
+<div id="home" class="box">
+  <h3>👋 مرحبًا بك</h3>
+  <p>هذا نموذج جاهز لتسجيل الدخول ولوحة الحساب</p>
 </div>
 
-<div id="form">
-  <form onsubmit="savePost(event)">
-    <input id="title" placeholder="عنوان الإعلان" required>
-    <input id="price" type="number" placeholder="السعر" required>
-    <select id="category">
-      <option>سيارات</option>
-      <option>دراجات</option>
-      <option>ألعاب</option>
-      <option>عقارات</option>
-      <option>وظائف</option>
-    </select>
-    <button>حفظ الإعلان</button>
-  </form>
+<!-- تسجيل الدخول -->
+<div id="login" class="box hidden">
+  <h3>تسجيل الدخول</h3>
+  <input id="loginEmail" placeholder="البريد الإلكتروني">
+  <input id="loginPass" type="password" placeholder="كلمة المرور">
+  <button class="main" onclick="login()">دخول</button>
+  <p onclick="showRegister()" style="text-align:center;cursor:pointer">إنشاء حساب جديد</p>
+</div>
+
+<!-- إنشاء حساب -->
+<div id="register" class="box hidden">
+  <h3>إنشاء حساب</h3>
+  <input id="regName" placeholder="الاسم">
+  <input id="regEmail" placeholder="البريد الإلكتروني">
+  <input id="regPass" type="password" placeholder="كلمة المرور">
+  <button class="main" onclick="register()">تسجيل</button>
+</div>
+
+<!-- حسابي -->
+<div id="account" class="box hidden">
+  <h3>👤 حسابي</h3>
+  <p id="userInfo"></p>
+  <button class="main" onclick="logout()">تسجيل خروج</button>
 </div>
 
 </div>
 
 <script>
-let posts = JSON.parse(localStorage.getItem("posts") || "[]");
-let editIndex = null;
-
-function showForm(){
-  home.style.display="none";
-  form.style.display="block";
-}
+let currentUser = JSON.parse(localStorage.getItem("user"));
 
 function showHome(){
-  form.style.display="none";
-  home.style.display="block";
-  clearForm();
+  hideAll();
+  home.classList.remove("hidden");
 }
 
-function savePost(e){
-  e.preventDefault();
-  const post = {
-    title: title.value,
-    price: price.value,
-    category: category.value
-  };
+function showLogin(){
+  hideAll();
+  if(currentUser){
+    showAccount();
+  }else{
+    login.classList.remove("hidden");
+  }
+}
 
-  if(editIndex === null){
-    posts.push(post);
-  } else {
-    posts[editIndex] = post;
-    editIndex = null;
+function showRegister(){
+  hideAll();
+  register.classList.remove("hidden");
+}
+
+function showAccount(){
+  hideAll();
+  account.classList.remove("hidden");
+  userInfo.innerText = "مرحبًا " + currentUser.name + " 👋";
+}
+
+function hideAll(){
+  home.classList.add("hidden");
+  login.classList.add("hidden");
+  register.classList.add("hidden");
+  account.classList.add("hidden");
+}
+
+function register(){
+  const name = regName.value;
+  const email = regEmail.value;
+  const pass = regPass.value;
+
+  if(!name || !email || !pass){
+    alert("أكمل البيانات");
+    return;
   }
 
-  localStorage.setItem("posts", JSON.stringify(posts));
+  currentUser = {name,email,pass};
+  localStorage.setItem("user",JSON.stringify(currentUser));
+  showAccount();
+}
+
+function login(){
+  const email = loginEmail.value;
+  const pass = loginPass.value;
+  const saved = JSON.parse(localStorage.getItem("user"));
+
+  if(!saved || saved.email!==email || saved.pass!==pass){
+    alert("بيانات غير صحيحة");
+    return;
+  }
+
+  currentUser = saved;
+  showAccount();
+}
+
+function logout(){
+  currentUser=null;
   showHome();
-  render();
 }
 
-function editPost(i){
-  const p = posts[i];
-  title.value = p.title;
-  price.value = p.price;
-  category.value = p.category;
-  editIndex = i;
-  showForm();
-}
-
-function deletePost(i){
-  if(confirm("حذف الإعلان؟")){
-    posts.splice(i,1);
-    localStorage.setItem("posts", JSON.stringify(posts));
-    render();
-  }
-}
-
-function clearForm(){
-  title.value="";
-  price.value="";
-}
-
-function render(){
-  const q = search.value || "";
-  postsDiv.innerHTML="";
-  posts.filter(p=>p.title.includes(q)).forEach((p,i)=>{
-    postsDiv.innerHTML += `
-      <div class="card">
-        <h3>${p.title}</h3>
-        <div>${p.category}</div>
-        <div class="price">${p.price} 💰</div>
-        <div class="actions">
-          <button class="delete" onclick="deletePost(${i})">حذف</button>
-          <button class="edit" onclick="editPost(${i})">تعديل</button>
-        </div>
-      </div>
-    `;
-  });
-}
-
-render();
+showHome();
 </script>
 
 </body>
