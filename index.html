@@ -61,6 +61,7 @@ header button{
 }
 .edit{background:#198754}
 .delete{background:#dc3545}
+.chat{background:#0d6efd}
 
 /* SECTIONS */
 .section{display:none;padding:15px}
@@ -73,6 +74,24 @@ input,select{
   border-radius:12px;background:#0d6efd;
   color:white;font-size:18px
 }
+
+/* CHAT */
+.chat-box{
+  background:white;
+  height:300px;
+  border-radius:12px;
+  padding:10px;
+  overflow-y:auto;
+  margin-bottom:10px;
+}
+.msg{
+  padding:8px 12px;
+  margin:6px 0;
+  border-radius:12px;
+  max-width:75%;
+}
+.me{background:#0d6efd;color:white;margin-left:auto}
+.other{background:#eee}
 </style>
 </head>
 
@@ -104,7 +123,7 @@ input,select{
   <div class="posts" id="posts"></div>
 </div>
 
-<!-- ADD FORM -->
+<!-- ADD -->
 <div id="form" class="section">
   <input id="title" placeholder="عنوان الإعلان">
   <input id="price" type="number" placeholder="السعر">
@@ -145,30 +164,33 @@ input,select{
   <button class="main-btn" onclick="logout()">تسجيل خروج</button>
 </div>
 
-<script>
-let posts = JSON.parse(localStorage.getItem("posts")||"[]");
-let editIndex=null;
-let currentCat="الكل";
-let user = JSON.parse(localStorage.getItem("user"));
+<!-- CHAT -->
+<div id="chat" class="section">
+  <h3 id="chatTitle"></h3>
+  <div class="chat-box" id="chatBox"></div>
+  <input id="chatInput" placeholder="اكتب رسالة">
+  <button class="main-btn" onclick="sendMsg()">إرسال</button>
+</div>
 
+<script>
+let posts=JSON.parse(localStorage.getItem("posts")||"[]");
+let chats=JSON.parse(localStorage.getItem("chats")||"{}");
+let editIndex=null,currentCat="الكل",user=JSON.parse(localStorage.getItem("user"));
+let currentChat=null;
 const postsBox=document.getElementById("posts");
 
-/* ===== NAV ===== */
+/* NAV */
 function hideAll(){
-  home.style.display=form.style.display=
-  login.style.display=register.style.display=
-  account.style.display="none";
+  home.style.display=form.style.display=login.style.display=
+  register.style.display=account.style.display=chat.style.display="none";
 }
 function showHome(){hideAll();home.style.display="block";render()}
 function showForm(){hideAll();form.style.display="block"}
 function openAccount(){hideAll();user?showAccount():login.style.display="block"}
 function showRegister(){hideAll();register.style.display="block"}
-function showAccount(){
-  account.style.display="block";
-  userInfo.innerText="مرحبًا "+user.name;
-}
+function showAccount(){account.style.display="block";userInfo.innerText="مرحبًا "+user.name}
 
-/* ===== AUTH ===== */
+/* AUTH */
 function register(){
   user={name:regName.value,email:regEmail.value,pass:regPass.value};
   localStorage.setItem("user",JSON.stringify(user));
@@ -176,60 +198,43 @@ function register(){
 }
 function login(){
   const u=JSON.parse(localStorage.getItem("user"));
-  if(!u||u.email!==loginEmail.value||u.pass!==loginPass.value){
-    alert("بيانات غير صحيحة");return;
-  }
+  if(!u||u.email!==loginEmail.value||u.pass!==loginPass.value){alert("خطأ");return;}
   user=u;showAccount();
 }
-function logout(){
-  user=null;localStorage.removeItem("user");showHome();
-}
+function logout(){user=null;localStorage.removeItem("user");showHome()}
 
-/* ===== POSTS ===== */
+/* POSTS */
 function save(){
-  if(!user){alert("سجل دخولك أولاً");return;}
-  if(!title.value||!price.value)return alert("أدخل البيانات");
-  const p={title:title.value,price:price.value,category:category.value,owner:user.email};
+  if(!user){alert("سجل دخولك");return;}
+  const p={title:title.value,price:price.value,category:category.value,owner:user.email,id:Date.now()};
   editIndex===null?posts.push(p):posts[editIndex]=p;
-  editIndex=null;
-  localStorage.setItem("posts",JSON.stringify(posts));
-  title.value=price.value="";
-  showHome();
+  editIndex=null;localStorage.setItem("posts",JSON.stringify(posts));
+  title.value=price.value="";showHome();
 }
 function render(){
   postsBox.innerHTML="";
   posts.forEach((p,i)=>{
     if(currentCat!=="الكل"&&p.category!==currentCat)return;
-    let actions="";
+    let btns=`<button class="chat" onclick="openChat(${p.id},'${p.title}')">💬 دردشة</button>`;
     if(user&&p.owner===user.email){
-      actions=`
-        <button class="edit" onclick="edit(${i})">تعديل</button>
-        <button class="delete" onclick="removePost(${i})">حذف</button>
-      `;
+      btns+=`<button class="edit" onclick="edit(${i})">تعديل</button>
+             <button class="delete" onclick="removePost(${i})">حذف</button>`;
     }
     postsBox.innerHTML+=`
       <div class="post">
         <h3>${p.title}</h3>
         <div>${p.category}</div>
         <div class="price">${p.price} 💰</div>
-        ${actions}
+        ${btns}
       </div>`;
   });
 }
-function edit(i){
-  const p=posts[i];
-  title.value=p.title;price.value=p.price;category.value=p.category;
-  editIndex=i;showForm();
-}
+function edit(i){const p=posts[i];title.value=p.title;price.value=p.price;category.value=p.category;editIndex=i;showForm()}
 function removePost(i){
-  if(confirm("حذف الإعلان؟")){
-    posts.splice(i,1);
-    localStorage.setItem("posts",JSON.stringify(posts));
-    render();
-  }
+  if(confirm("حذف؟")){posts.splice(i,1);localStorage.setItem("posts",JSON.stringify(posts));render()}
 }
 function showMyAds(){
-  if(!user){alert("سجل دخولك أولاً");return;}
+  if(!user){alert("سجل دخولك");return;}
   hideAll();home.style.display="block";
   postsBox.innerHTML="";
   posts.forEach((p,i)=>{
@@ -254,6 +259,29 @@ function search(t){
         <div class="price">${p.price} 💰</div>
       </div>`;
   });
+}
+
+/* CHAT */
+function openChat(id,title){
+  if(!user){alert("سجل دخولك");return;}
+  currentChat=id;
+  chatTitle.innerText="دردشة: "+title;
+  renderChat();
+  hideAll();chat.style.display="block";
+}
+function renderChat(){
+  chatBox.innerHTML="";
+  (chats[currentChat]||[]).forEach(m=>{
+    chatBox.innerHTML+=`<div class="msg ${m.me?'me':'other'}">${m.text}</div>`;
+  });
+}
+function sendMsg(){
+  if(!chatInput.value)return;
+  chats[currentChat]=chats[currentChat]||[];
+  chats[currentChat].push({text:chatInput.value,me:true});
+  localStorage.setItem("chats",JSON.stringify(chats));
+  chatInput.value="";
+  renderChat();
 }
 
 showHome();
