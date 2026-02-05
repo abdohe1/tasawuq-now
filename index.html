@@ -1,160 +1,95 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <title>تسوق الآن</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>تسوق الآن</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Tahoma, Arial;
-    }
+<style>
+*{box-sizing:border-box;font-family:Tahoma,Arial}
+body{margin:0;background:#f2f4f8;color:#222}
 
-    body {
-      margin: 0;
-      background: #f2f4f8;
-      color: #222;
-    }
+/* HEADER */
+header{
+  background:linear-gradient(135deg,#0d6efd,#0aa2c0);
+  padding:25px;
+  text-align:center;
+  color:white;
+  border-bottom-left-radius:25px;
+  border-bottom-right-radius:25px;
+}
+header h1{margin:0 0 15px}
+header button{
+  background:white;
+  color:#0d6efd;
+  border:none;
+  padding:10px 16px;
+  margin:5px;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    /* ===== HEADER ===== */
-    header {
-      background: linear-gradient(135deg, #0d6efd, #0aa2c0);
-      padding: 25px;
-      text-align: center;
-      color: white;
-      border-bottom-left-radius: 25px;
-      border-bottom-right-radius: 25px;
-    }
+/* SEARCH */
+.search-box{margin:15px}
+.search-box input{
+  width:100%;padding:12px;border-radius:12px;
+  border:1px solid #ddd;font-size:16px
+}
 
-    header h1 {
-      margin: 0 0 15px;
-      font-size: 26px;
-    }
+/* CATEGORIES */
+.categories{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;padding:15px
+}
+.cat{
+  background:white;padding:15px;border-radius:14px;
+  text-align:center;font-weight:bold;cursor:pointer
+}
 
-    header button {
-      background: white;
-      color: #0d6efd;
-      border: none;
-      padding: 10px 16px;
-      margin: 5px;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+/* POSTS */
+.posts{padding:15px}
+.post{
+  background:white;padding:15px;border-radius:16px;
+  margin-bottom:15px;box-shadow:0 3px 10px rgba(0,0,0,.08)
+}
+.price{color:green;font-weight:bold;font-size:18px}
+.post button{
+  border:none;padding:10px;border-radius:10px;
+  margin:5px 3px 0;color:white;cursor:pointer
+}
+.edit{background:#198754}
+.delete{background:#dc3545}
 
-    /* ===== SEARCH ===== */
-    .search-box {
-      margin: 15px;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #ddd;
-      font-size: 16px;
-    }
-
-    /* ===== CATEGORIES ===== */
-    .categories {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      padding: 15px;
-    }
-
-    .cat {
-      background: white;
-      padding: 15px;
-      border-radius: 14px;
-      text-align: center;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,.05);
-    }
-
-    /* ===== POSTS ===== */
-    .posts {
-      padding: 15px;
-    }
-
-    .post {
-      background: white;
-      padding: 15px;
-      border-radius: 16px;
-      margin-bottom: 15px;
-      box-shadow: 0 3px 10px rgba(0,0,0,.08);
-    }
-
-    .post h3 {
-      margin: 0 0 8px;
-    }
-
-    .price {
-      color: green;
-      font-weight: bold;
-      font-size: 18px;
-    }
-
-    .post button {
-      border: none;
-      padding: 10px;
-      border-radius: 10px;
-      cursor: pointer;
-      margin: 5px 3px 0;
-      color: white;
-    }
-
-    .edit {
-      background: #198754;
-    }
-
-    .delete {
-      background: #dc3545;
-    }
-
-    /* ===== FORM ===== */
-    #form {
-      display: none;
-      padding: 15px;
-    }
-
-    #form input, #form select {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-
-    #form button {
-      width: 100%;
-      background: #0d6efd;
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      font-size: 18px;
-    }
-  </style>
+/* FORM / AUTH */
+.section{display:none;padding:15px}
+input,select{
+  width:100%;padding:12px;margin-bottom:10px;
+  border-radius:10px;border:1px solid #ccc;font-size:16px
+}
+.main-btn{
+  width:100%;padding:12px;border:none;
+  border-radius:12px;background:#0d6efd;
+  color:white;font-size:18px
+}
+</style>
 </head>
 
 <body>
 
-<!-- ===== HEADER ===== -->
 <header>
   <h1>🛒 تسوق الآن</h1>
   <button onclick="showHome()">الرئيسية</button>
   <button onclick="showForm()">إضافة إعلان</button>
+  <button onclick="openAccount()">حسابي</button>
 </header>
 
 <!-- ===== HOME ===== -->
 <div id="home">
 
   <div class="search-box">
-    <input type="text" placeholder="ابحث عن إعلان..." oninput="search(this.value)">
+    <input placeholder="ابحث عن إعلان..." oninput="search(this.value)">
   </div>
 
   <div class="categories">
@@ -169,8 +104,8 @@
   <div class="posts" id="posts"></div>
 </div>
 
-<!-- ===== FORM ===== -->
-<div id="form">
+<!-- ===== ADD FORM ===== -->
+<div id="form" class="section">
   <input id="title" placeholder="عنوان الإعلان">
   <input id="price" type="number" placeholder="السعر">
   <select id="category">
@@ -180,115 +115,129 @@
     <option>عقارات</option>
     <option>وظائف</option>
   </select>
-  <button onclick="save()">حفظ الإعلان</button>
+  <button class="main-btn" onclick="save()">حفظ الإعلان</button>
+</div>
+
+<!-- ===== LOGIN ===== -->
+<div id="login" class="section">
+  <h3>تسجيل الدخول</h3>
+  <input id="loginEmail" placeholder="البريد الإلكتروني">
+  <input id="loginPass" type="password" placeholder="كلمة المرور">
+  <button class="main-btn" onclick="login()">دخول</button>
+  <p onclick="showRegister()" style="text-align:center;cursor:pointer">
+    إنشاء حساب جديد
+  </p>
+</div>
+
+<!-- ===== REGISTER ===== -->
+<div id="register" class="section">
+  <h3>إنشاء حساب</h3>
+  <input id="regName" placeholder="الاسم">
+  <input id="regEmail" placeholder="البريد الإلكتروني">
+  <input id="regPass" type="password" placeholder="كلمة المرور">
+  <button class="main-btn" onclick="register()">تسجيل</button>
+</div>
+
+<!-- ===== ACCOUNT ===== -->
+<div id="account" class="section">
+  <h3>👤 حسابي</h3>
+  <p id="userInfo"></p>
+  <button class="main-btn" onclick="logout()">تسجيل خروج</button>
 </div>
 
 <script>
-  let posts = JSON.parse(localStorage.getItem("posts") || "[]");
-  let editIndex = null;
-  let currentCat = "الكل";
+let posts = JSON.parse(localStorage.getItem("posts")||"[]");
+let editIndex=null;
+let currentCat="الكل";
+let user = JSON.parse(localStorage.getItem("user"));
 
-  function showHome() {
-    document.getElementById("home").style.display = "block";
-    document.getElementById("form").style.display = "none";
+function hideAll(){
+  home.style.display=form.style.display=
+  login.style.display=register.style.display=
+  account.style.display="none";
+}
+
+function showHome(){hideAll();home.style.display="block";render()}
+function showForm(){hideAll();form.style.display="block"}
+function openAccount(){
+  hideAll();
+  user ? showAccount() : login.style.display="block";
+}
+
+function showRegister(){hideAll();register.style.display="block"}
+function showAccount(){
+  account.style.display="block";
+  userInfo.innerText="مرحبًا "+user.name;
+}
+
+function register(){
+  user={name:regName.value,email:regEmail.value,pass:regPass.value};
+  localStorage.setItem("user",JSON.stringify(user));
+  showAccount();
+}
+
+function login(){
+  const u=JSON.parse(localStorage.getItem("user"));
+  if(!u||u.email!==loginEmail.value||u.pass!==loginPass.value){
+    alert("بيانات غير صحيحة");return;
   }
+  user=u;showAccount();
+}
 
-  function showForm() {
-    document.getElementById("home").style.display = "none";
-    document.getElementById("form").style.display = "block";
-  }
+function logout(){
+  user=null;localStorage.removeItem("user");showHome();
+}
 
-  function save() {
-    const title = titleInput().value;
-    const price = priceInput().value;
-    const category = catInput().value;
+/* ===== POSTS ===== */
+function save(){
+  if(!title.value||!price.value)return alert("أدخل البيانات");
+  const p={title:title.value,price:price.value,category:category.value};
+  editIndex===null?posts.push(p):posts[editIndex]=p;
+  editIndex=null;localStorage.setItem("posts",JSON.stringify(posts));
+  title.value=price.value="";showHome();
+}
 
-    if (!title || !price) {
-      alert("أدخل كل البيانات");
-      return;
-    }
+function render(){
+  postsBox.innerHTML="";
+  posts.forEach((p,i)=>{
+    if(currentCat!=="الكل"&&p.category!==currentCat)return;
+    postsBox.innerHTML+=`
+    <div class="post">
+      <h3>${p.title}</h3>
+      <div>${p.category}</div>
+      <div class="price">${p.price} 💰</div>
+      <button class="edit" onclick="edit(${i})">تعديل</button>
+      <button class="delete" onclick="removePost(${i})">حذف</button>
+    </div>`;
+  });
+}
 
-    const post = { title, price, category };
-
-    if (editIndex === null) {
-      posts.push(post);
-    } else {
-      posts[editIndex] = post;
-      editIndex = null;
-    }
-
-    localStorage.setItem("posts", JSON.stringify(posts));
-    clearForm();
-    showHome();
+function edit(i){
+  const p=posts[i];
+  title.value=p.title;price.value=p.price;category.value=p.category;
+  editIndex=i;showForm();
+}
+function removePost(i){
+  if(confirm("حذف الإعلان؟")){
+    posts.splice(i,1);
+    localStorage.setItem("posts",JSON.stringify(posts));
     render();
   }
+}
+function filterCat(c){currentCat=c;render()}
+function search(t){
+  postsBox.innerHTML="";
+  posts.filter(p=>p.title.includes(t)).forEach(p=>{
+    postsBox.innerHTML+=`
+    <div class="post">
+      <h3>${p.title}</h3>
+      <div class="price">${p.price} 💰</div>
+    </div>`;
+  });
+}
 
-  function render() {
-    const box = document.getElementById("posts");
-    box.innerHTML = "";
-
-    posts.forEach((p, i) => {
-      if (currentCat !== "الكل" && p.category !== currentCat) return;
-
-      box.innerHTML += `
-        <div class="post">
-          <h3>${p.title}</h3>
-          <div>${p.category}</div>
-          <div class="price">${p.price} 💰</div>
-          <button class="edit" onclick="edit(${i})">تعديل</button>
-          <button class="delete" onclick="removePost(${i})">حذف</button>
-        </div>
-      `;
-    });
-  }
-
-  function edit(i) {
-    const p = posts[i];
-    titleInput().value = p.title;
-    priceInput().value = p.price;
-    catInput().value = p.category;
-    editIndex = i;
-    showForm();
-  }
-
-  function removePost(i) {
-    if (confirm("حذف الإعلان؟")) {
-      posts.splice(i, 1);
-      localStorage.setItem("posts", JSON.stringify(posts));
-      render();
-    }
-  }
-
-  function filterCat(cat) {
-    currentCat = cat;
-    render();
-  }
-
-  function search(text) {
-    const box = document.getElementById("posts");
-    box.innerHTML = "";
-    posts.forEach((p, i) => {
-      if (p.title.includes(text)) {
-        box.innerHTML += `
-          <div class="post">
-            <h3>${p.title}</h3>
-            <div class="price">${p.price} 💰</div>
-          </div>
-        `;
-      }
-    });
-  }
-
-  function clearForm() {
-    titleInput().value = "";
-    priceInput().value = "";
-  }
-
-  const titleInput = () => document.getElementById("title");
-  const priceInput = () => document.getElementById("price");
-  const catInput = () => document.getElementById("category");
-
-  render();
+const postsBox=document.getElementById("posts");
+showHome();
 </script>
 
 </body>
