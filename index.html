@@ -6,33 +6,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{box-sizing:border-box;font-family:Tahoma,Arial}
-body{margin:0;background:#f2f4f8}
+body{margin:0;font-family:Tahoma,Arial;background:#f2f4f8}
 header{
 background:linear-gradient(135deg,#0d6efd,#0aa2c0);
-padding:25px;text-align:center;color:white;
+color:white;padding:25px;text-align:center;
 border-bottom-left-radius:25px;
 border-bottom-right-radius:25px;
 }
 header button{
-background:white;color:#0d6efd;
-border:none;padding:10px 15px;
-margin:5px;border-radius:12px;
-font-weight:bold;cursor:pointer
+background:white;border:none;
+padding:10px 15px;margin:5px;
+border-radius:12px;font-weight:bold;cursor:pointer
 }
 .box{
 background:white;margin:20px;
 padding:20px;border-radius:16px;
 box-shadow:0 3px 10px rgba(0,0,0,.08)
 }
-.hidden{display:none}
-.admin-badge{
-background:#dc3545;
-color:white;
-padding:4px 8px;
-border-radius:8px;
-font-size:12px
+input,select{
+width:100%;padding:12px;margin-bottom:10px;
+border-radius:10px;border:1px solid #ccc;font-size:16px
 }
+button.main{
+width:100%;padding:12px;border:none;
+border-radius:12px;font-size:18px;
+color:white;background:#0d6efd;cursor:pointer
+}
+.post{border-bottom:1px solid #eee;padding:10px 0}
+.price{color:green;font-weight:bold}
+.hidden{display:none}
+.admin{color:red;font-weight:bold}
 </style>
 </head>
 
@@ -41,35 +44,57 @@ font-size:12px
 <header>
 <h2>🛒 تسوق الآن</h2>
 <button onclick="showHome()">الرئيسية</button>
-<button onclick="showAuth()">حسابي</button>
-<button onclick="logout()" id="logoutBtn" class="hidden">خروج</button>
-<span id="adminBadge" class="admin-badge hidden">ADMIN</span>
+<button onclick="showForm()">إضافة إعلان</button>
+<button onclick="logout()">خروج</button>
+<span id="adminLabel" class="admin hidden">ADMIN</span>
 </header>
 
-<div id="home" class="box hidden">
-<h3>مرحبًا بك 👋</h3>
-<p>النسخة النهائية قيد البناء...</p>
-</div>
-
-<div id="authBox" class="box">
+<div class="box" id="authBox">
 <h3>تسجيل الدخول / إنشاء حساب</h3>
 <input id="email" placeholder="البريد الإلكتروني">
 <input id="password" type="password" placeholder="كلمة المرور">
-<button onclick="login()">دخول</button>
+<button class="main" onclick="login()">دخول</button>
 <br><br>
-<button onclick="register()">إنشاء حساب</button>
+<button class="main" style="background:#198754" onclick="register()">إنشاء حساب</button>
+</div>
+
+<div class="box hidden" id="home">
+<h3>الإعلانات</h3>
+<div id="posts"></div>
+</div>
+
+<div class="box hidden" id="form">
+<h3>إضافة إعلان</h3>
+<input id="title" placeholder="عنوان الإعلان">
+<input id="price" type="number" placeholder="السعر">
+<select id="category">
+<option>سيارات</option>
+<option>دراجات</option>
+<option>العاب</option>
+<option>عقارات</option>
+<option>وظائف</option>
+</select>
+<button class="main" onclick="savePost()">حفظ الإعلان</button>
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import {
+import { 
 getAuth,
 createUserWithEmailAndPassword,
 signInWithEmailAndPassword,
-signOut,
-onAuthStateChanged
+onAuthStateChanged,
+signOut
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
+import {
+getFirestore,
+collection,
+addDoc,
+onSnapshot,
+deleteDoc,
+doc
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyBuhnSrkn6jXcCxUnbL-o14gd5pS9wRmnY",
@@ -81,55 +106,102 @@ appId: "1:786110830242:web:15a4752cd9b5db3f0129fb"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+const auth = getAuth();
+const db = getFirestore();
 
 const ADMIN_EMAIL = "abdoalk73@gmail.com";
+let isAdmin = false;
 
-const home = document.getElementById("home");
 const authBox = document.getElementById("authBox");
-const logoutBtn = document.getElementById("logoutBtn");
-const adminBadge = document.getElementById("adminBadge");
+const home = document.getElementById("home");
+const form = document.getElementById("form");
+const postsBox = document.getElementById("posts");
+const adminLabel = document.getElementById("adminLabel");
 
-window.showHome = () => {
-home.classList.remove("hidden");
+onAuthStateChanged(auth,user=>{
+if(user){
+isAdmin = user.email === ADMIN_EMAIL;
+
 authBox.classList.add("hidden");
-};
-
-window.showAuth = () => {
+home.classList.remove("hidden");
+adminLabel.classList.toggle("hidden",!isAdmin);
+loadPosts();
+}else{
 authBox.classList.remove("hidden");
 home.classList.add("hidden");
-};
+form.classList.add("hidden");
+adminLabel.classList.add("hidden");
+}
+});
 
-window.register = () => {
+window.register=()=>{
 createUserWithEmailAndPassword(auth,email.value,password.value)
 .catch(e=>alert(e.message));
 };
 
-window.login = () => {
+window.login=()=>{
 signInWithEmailAndPassword(auth,email.value,password.value)
 .catch(e=>alert(e.message));
 };
 
-window.logout = () => signOut(auth);
+window.logout=()=>signOut(auth);
 
-onAuthStateChanged(auth,user=>{
-if(user){
-showHome();
-logoutBtn.classList.remove("hidden");
+window.showHome=()=>{
+home.classList.remove("hidden");
+form.classList.add("hidden");
+};
 
-if(user.email === ADMIN_EMAIL){
-adminBadge.classList.remove("hidden");
-}else{
-adminBadge.classList.add("hidden");
-}
+window.showForm=()=>{
+if(!auth.currentUser){alert("سجل دخولك");return;}
+form.classList.remove("hidden");
+home.classList.add("hidden");
+};
 
-}else{
-showAuth();
-logoutBtn.classList.add("hidden");
-adminBadge.classList.add("hidden");
-}
+window.savePost=async()=>{
+if(!auth.currentUser){alert("سجل دخولك");return;}
+
+await addDoc(collection(db,"posts"),{
+title:title.value,
+price:price.value,
+category:category.value,
+userId:auth.currentUser.uid,
+userEmail:auth.currentUser.email,
+createdAt:Date.now()
 });
 
+title.value="";
+price.value="";
+showHome();
+};
+
+function loadPosts(){
+onSnapshot(collection(db,"posts"),snap=>{
+postsBox.innerHTML="";
+
+snap.forEach(docSnap=>{
+const p=docSnap.data();
+const id=docSnap.id;
+
+let deleteBtn="";
+
+if(isAdmin || auth.currentUser?.uid===p.userId){
+deleteBtn=`<button onclick="deletePost('${id}')">حذف</button>`;
+}
+
+postsBox.innerHTML+=`
+<div class="post">
+<strong>${p.title}</strong><br>
+<span>${p.category}</span><br>
+<span class="price">${p.price} 💰</span><br>
+${deleteBtn}
+</div>`;
+});
+});
+}
+
+window.deletePost=async(id)=>{
+await deleteDoc(doc(db,"posts",id));
+};
 </script>
 
 </body>
