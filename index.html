@@ -36,6 +36,11 @@ color:white;background:#0d6efd;cursor:pointer
 .price{color:green;font-weight:bold}
 .hidden{display:none}
 .admin{color:red;font-weight:bold}
+.catBtn{
+padding:6px 10px;margin:3px;
+border:none;border-radius:8px;
+cursor:pointer;background:#eee
+}
 </style>
 </head>
 
@@ -45,6 +50,7 @@ color:white;background:#0d6efd;cursor:pointer
 <h2>🛒 تسوق الآن</h2>
 <button onclick="showHome()">الرئيسية</button>
 <button onclick="showForm()">إضافة إعلان</button>
+<button onclick="showMyPosts()">إعلاناتي</button>
 <button onclick="logout()">خروج</button>
 <span id="adminLabel" class="admin hidden">ADMIN</span>
 </header>
@@ -60,6 +66,18 @@ color:white;background:#0d6efd;cursor:pointer
 
 <div class="box hidden" id="home">
 <h3>الإعلانات</h3>
+
+<input id="searchInput" placeholder="بحث..." oninput="loadPosts()">
+
+<div>
+<button class="catBtn" onclick="filterCategory('الكل')">الكل</button>
+<button class="catBtn" onclick="filterCategory('سيارات')">سيارات</button>
+<button class="catBtn" onclick="filterCategory('دراجات')">دراجات</button>
+<button class="catBtn" onclick="filterCategory('العاب')">العاب</button>
+<button class="catBtn" onclick="filterCategory('عقارات')">عقارات</button>
+<button class="catBtn" onclick="filterCategory('وظائف')">وظائف</button>
+</div>
+
 <div id="posts"></div>
 </div>
 
@@ -96,32 +114,33 @@ deleteDoc,
 doc
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-const firebaseConfig = {
-apiKey: "AIzaSyBuhnSrkn6jXcCxUnbL-o14gd5pS9wRmnY",
-authDomain: "tasawuq-now-eb955.firebaseapp.com",
-projectId: "tasawuq-now-eb955",
-storageBucket: "tasawuq-now-eb955.firebasestorage.app",
-messagingSenderId: "786110830242",
-appId: "1:786110830242:web:15a4752cd9b5db3f0129fb"
+const firebaseConfig={
+apiKey:"AIzaSyBuhnSrkn6jXcCxUnbL-o14gd5pS9wRmnY",
+authDomain:"tasawuq-now-eb955.firebaseapp.com",
+projectId:"tasawuq-now-eb955",
+storageBucket:"tasawuq-now-eb955.firebasestorage.app",
+messagingSenderId:"786110830242",
+appId:"1:786110830242:web:15a4752cd9b5db3f0129fb"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth();
-const db = getFirestore();
+const app=initializeApp(firebaseConfig);
+const auth=getAuth();
+const db=getFirestore();
 
-const ADMIN_EMAIL = "abdoalk73@gmail.com";
-let isAdmin = false;
+const ADMIN_EMAIL="abdoalk73@gmail.com";
+let isAdmin=false;
+let showOnlyMine=false;
+let currentCategory="الكل";
 
-const authBox = document.getElementById("authBox");
-const home = document.getElementById("home");
-const form = document.getElementById("form");
-const postsBox = document.getElementById("posts");
-const adminLabel = document.getElementById("adminLabel");
+const authBox=document.getElementById("authBox");
+const home=document.getElementById("home");
+const form=document.getElementById("form");
+const postsBox=document.getElementById("posts");
+const adminLabel=document.getElementById("adminLabel");
 
 onAuthStateChanged(auth,user=>{
 if(user){
-isAdmin = user.email === ADMIN_EMAIL;
-
+isAdmin=user.email===ADMIN_EMAIL;
 authBox.classList.add("hidden");
 home.classList.remove("hidden");
 adminLabel.classList.toggle("hidden",!isAdmin);
@@ -147,8 +166,10 @@ signInWithEmailAndPassword(auth,email.value,password.value)
 window.logout=()=>signOut(auth);
 
 window.showHome=()=>{
+showOnlyMine=false;
 home.classList.remove("hidden");
 form.classList.add("hidden");
+loadPosts();
 };
 
 window.showForm=()=>{
@@ -157,9 +178,18 @@ form.classList.remove("hidden");
 home.classList.add("hidden");
 };
 
+window.showMyPosts=()=>{
+showOnlyMine=true;
+loadPosts();
+};
+
+window.filterCategory=(cat)=>{
+currentCategory=cat;
+loadPosts();
+};
+
 window.savePost=async()=>{
 if(!auth.currentUser){alert("سجل دخولك");return;}
-
 await addDoc(collection(db,"posts"),{
 title:title.value,
 price:price.value,
@@ -168,7 +198,6 @@ userId:auth.currentUser.uid,
 userEmail:auth.currentUser.email,
 createdAt:Date.now()
 });
-
 title.value="";
 price.value="";
 showHome();
@@ -177,13 +206,17 @@ showHome();
 function loadPosts(){
 onSnapshot(collection(db,"posts"),snap=>{
 postsBox.innerHTML="";
+const searchText=document.getElementById("searchInput").value.toLowerCase();
 
 snap.forEach(docSnap=>{
 const p=docSnap.data();
 const id=docSnap.id;
 
-let deleteBtn="";
+if(showOnlyMine && auth.currentUser?.uid!==p.userId) return;
+if(currentCategory!=="الكل" && p.category!==currentCategory) return;
+if(searchText && !p.title.toLowerCase().includes(searchText)) return;
 
+let deleteBtn="";
 if(isAdmin || auth.currentUser?.uid===p.userId){
 deleteBtn=`<button onclick="deletePost('${id}')">حذف</button>`;
 }
